@@ -1,0 +1,142 @@
+---
+import { execSync } from 'node:child_process';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+let gitLines: string[] = [];
+try {
+	const output = execSync(
+		'git log --since="30 days ago" --pretty=format:%h %s --max-count=8',
+		{ encoding: 'utf8' }
+	);
+	gitLines = output
+		.split('\n')
+		.map((line) => line.trim())
+		.filter(Boolean);
+} catch (error) {
+	gitLines = ['(未能读取 git 提交记录)'];
+}
+
+const allTags = Array.from(
+	new Set(posts.flatMap((post) => post.data.tags ?? []))
+).slice(0, 10);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`${SITE_TITLE} / Blog`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<div class="noise-layer" aria-hidden="true"></div>
+		<div class="data-stream" aria-hidden="true"></div>
+		<div class="hud-panel" aria-hidden="true">
+			<div class="hud-row">
+				<span class="hud-label">cpu</span>
+				<span class="hud-bar" style="--fill: 64%;"></span>
+				<span class="hud-value">64%</span>
+			</div>
+			<div class="hud-row">
+				<span class="hud-label">ram</span>
+				<span class="hud-bar" style="--fill: 52%;"></span>
+				<span class="hud-value">52%</span>
+			</div>
+			<div class="hud-row">
+				<span class="hud-label">net</span>
+				<span class="hud-bar" style="--fill: 66%;"></span>
+				<span class="hud-value">66%</span>
+			</div>
+		</div>
+		<main class="page page-grid">
+			<aside class="side-stack">
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-controls">
+							<span class="terminal-dot is-close" aria-hidden="true"></span>
+							<span class="terminal-dot is-min" aria-hidden="true"></span>
+							<span class="terminal-dot is-max" aria-hidden="true"></span>
+						</div>
+						<div class="terminal-title">profile</div>
+					</div>
+					<div class="terminal-body">
+						<div class="meta-list">
+							<div>用户：耶温</div>
+							<div>角色：前端 / 设计 / 写作者</div>
+							<div>状态：online</div>
+							<div>关注：UI / 工具 / 复盘</div>
+						</div>
+						<p class="hero-sub">
+							<span class="prompt">$</span>whoami
+						</p>
+					</div>
+				</section>
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-controls">
+							<span class="terminal-dot is-close" aria-hidden="true"></span>
+							<span class="terminal-dot is-min" aria-hidden="true"></span>
+							<span class="terminal-dot is-max" aria-hidden="true"></span>
+						</div>
+						<div class="terminal-title">git activity</div>
+					</div>
+					<div class="terminal-body">
+						<p class="hero-sub">
+							<span class="prompt">$</span>git log --since="30 days ago" --oneline
+						</p>
+						<ul class="terminal-list">
+							{gitLines.map((line) => (
+								<li>{line}</li>
+							))}
+						</ul>
+						<div>
+							<p class="meta-label">标签索引</p>
+							{allTags.length ? (
+								<div class="tag-list">
+									{allTags.map((tag) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							) : (
+								<p class="hero-sub">暂无标签</p>
+							)}
+						</div>
+					</div>
+				</section>
+			</aside>
+			<section class="terminal terminal-article">
+				<div class="terminal-bar">
+					<div class="terminal-controls">
+						<span class="terminal-dot is-close" aria-hidden="true"></span>
+						<span class="terminal-dot is-min" aria-hidden="true"></span>
+						<span class="terminal-dot is-max" aria-hidden="true"></span>
+					</div>
+					<div class="terminal-title">posts</div>
+				</div>
+				<div class="terminal-body">
+					<div>
+						<h1>文章列表</h1>
+						<p class="hero-sub">执行 <code>open /blog/&lt;slug&gt;</code> 进入详情。</p>
+					</div>
+					<ul class="post-list">
+						{posts.map((post) => (
+							<li>
+								<a href={`/blog/${post.id}/`}>
+									{post.data.title}
+								</a>
+								<div class="post-meta">
+									<FormattedDate date={post.data.pubDate} /> · {post.data.description}
+								</div>
+							</li>
+						))}
+					</ul>
+				</div>
+			</section>
+		</main>
+	</body>
+</html>

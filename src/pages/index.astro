@@ -1,0 +1,54 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<div class="noise-layer" aria-hidden="true"></div>
+		<div class="data-stream" aria-hidden="true"></div>
+		<div class="hud-panel" aria-hidden="true">
+			<div class="hud-row">
+				<span class="hud-label">cpu</span>
+				<span class="hud-bar" style="--fill: 62%;"></span>
+				<span class="hud-value">62%</span>
+			</div>
+			<div class="hud-row">
+				<span class="hud-label">ram</span>
+				<span class="hud-bar" style="--fill: 48%;"></span>
+				<span class="hud-value">48%</span>
+			</div>
+			<div class="hud-row">
+				<span class="hud-label">net</span>
+				<span class="hud-bar" style="--fill: 71%;"></span>
+				<span class="hud-value">71%</span>
+			</div>
+		</div>
+		<main class="page page-home">
+			<section class="terminal terminal-hero">
+				<div class="terminal-bar">
+					<div class="terminal-controls">
+						<span class="terminal-dot is-close" aria-hidden="true"></span>
+						<span class="terminal-dot is-min" aria-hidden="true"></span>
+						<span class="terminal-dot is-max" aria-hidden="true"></span>
+					</div>
+					<div class="terminal-title">yewen@home:~</div>
+				</div>
+				<div class="terminal-body">
+					<div class="matrix-title">耶温主页</div>
+					<p class="hero-line">
+						<span class="prompt">&gt;</span>{SITE_DESCRIPTION}
+					</p>
+					<p class="hero-sub">
+						<span class="type-line">$ echo "记录思考，输出可复用的答案。"</span>
+						<span class="cursor" aria-hidden="true"></span>
+					</p>
+				</div>
+			</section>
+		</main>
+	</body>
+</html>

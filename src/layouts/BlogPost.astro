@@ -1,0 +1,140 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+type Props = CollectionEntry<'blog'>['data'] & {
+	headings?: MarkdownHeading[];
+};
+
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	tags,
+	category,
+	headings = [],
+} = Astro.props as Props;
+---
+
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<div class="noise-layer" aria-hidden="true"></div>
+		<div class="data-stream" aria-hidden="true"></div>
+		<div class="hud-panel" aria-hidden="true">
+			<div class="hud-row">
+				<span class="hud-label">cpu</span>
+				<span class="hud-bar" style="--fill: 58%;"></span>
+				<span class="hud-value">58%</span>
+			</div>
+			<div class="hud-row">
+				<span class="hud-label">ram</span>
+				<span class="hud-bar" style="--fill: 44%;"></span>
+				<span class="hud-value">44%</span>
+			</div>
+			<div class="hud-row">
+				<span class="hud-label">net</span>
+				<span class="hud-bar" style="--fill: 72%;"></span>
+				<span class="hud-value">72%</span>
+			</div>
+		</div>
+		<main class="page page-grid">
+			<aside class="side-stack">
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-controls">
+							<span class="terminal-dot is-close" aria-hidden="true"></span>
+							<span class="terminal-dot is-min" aria-hidden="true"></span>
+							<span class="terminal-dot is-max" aria-hidden="true"></span>
+						</div>
+						<div class="terminal-title">目录</div>
+					</div>
+					<div class="terminal-body">
+						{headings.length ? (
+							<ol class="toc-list">
+								{headings.map((heading) => (
+									<li class="toc-item" style={`--depth:${heading.depth}`}>
+										<a href={`#${heading.slug}`}>{heading.text}</a>
+									</li>
+								))}
+							</ol>
+						) : (
+							<p class="hero-sub">暂无目录</p>
+						)}
+					</div>
+				</section>
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-controls">
+							<span class="terminal-dot is-close" aria-hidden="true"></span>
+							<span class="terminal-dot is-min" aria-hidden="true"></span>
+							<span class="terminal-dot is-max" aria-hidden="true"></span>
+						</div>
+						<div class="terminal-title">元信息</div>
+					</div>
+					<div class="terminal-body">
+						<div class="meta-list">
+							<div>
+								<span class="meta-label">发布日期</span>
+								<div><FormattedDate date={pubDate} /></div>
+							</div>
+							{updatedDate && (
+								<div>
+									<span class="meta-label">更新日期</span>
+									<div><FormattedDate date={updatedDate} /></div>
+								</div>
+							)}
+						</div>
+						<div>
+							<p class="meta-label">标签</p>
+							{tags?.length ? (
+								<div class="tag-list">
+									{tags.map((tag) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							) : (
+								<p class="hero-sub">暂无标签</p>
+							)}
+						</div>
+						<div>
+							<p class="meta-label">分类</p>
+							{category ? <p>{category}</p> : <p class="hero-sub">暂无分类</p>}
+						</div>
+					</div>
+				</section>
+			</aside>
+			<section class="terminal terminal-article">
+				<div class="terminal-bar">
+					<div class="terminal-controls">
+						<span class="terminal-dot is-close" aria-hidden="true"></span>
+						<span class="terminal-dot is-min" aria-hidden="true"></span>
+						<span class="terminal-dot is-max" aria-hidden="true"></span>
+					</div>
+					<div class="terminal-title">article</div>
+				</div>
+				<div class="terminal-body">
+					<header class="post-header">
+						<h1>{title}</h1>
+						<p class="hero-sub">{description}</p>
+						<div class="post-meta">
+							<FormattedDate date={pubDate} />
+							{updatedDate && (
+								<span> · 更新于 <FormattedDate date={updatedDate} /></span>
+							)}
+						</div>
+					</header>
+					<hr class="divider" />
+					<article class="post-content">
+						<slot />
+					</article>
+				</div>
+			</section>
+		</main>
+	</body>
+</html>
