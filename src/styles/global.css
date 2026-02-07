@@ -472,23 +472,26 @@ main::after {
 .hero-sub {
 	font-size: 0.95rem;
 	color: var(--muted);
+	overflow-wrap: anywhere;
 }
 
 .type-line {
-	display: inline-block;
-	white-space: nowrap;
-	overflow: hidden;
-	max-width: 40ch;
-	animation: typing 4.2s steps(40, end) 0.6s 1 both;
+	display: inline;
+	white-space: normal;
+	word-break: break-word;
+	font-variant-ligatures: none;
 }
 
 .cursor {
 	display: inline-block;
-	width: 0.7ch;
-	background: var(--accent);
-	margin-left: 0.3ch;
+	width: 0;
+	height: 1em;
+	border-left: 5px solid rgba(130, 245, 255, 0.7);
+	margin-left: 0.25ch;
+	vertical-align: middle;
+	transform: translateY(-0.08em);
 	animation: caret 0.85s step-end infinite;
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 .terminal-list,
@@ -745,8 +748,8 @@ mark {
 		scroll-behavior: auto !important;
 	}
 
-	.type-line {
-		border-right: 0;
+	.cursor {
+		animation: none;
 	}
 }
 
@@ -785,15 +788,6 @@ mark {
 	}
 	70% {
 		opacity: 0.9;
-	}
-}
-
-@keyframes typing {
-	from {
-		max-width: 0;
-	}
-	to {
-		max-width: 40ch;
 	}
 }
 

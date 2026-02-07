@@ -50,5 +50,35 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 				</div>
 			</section>
 		</main>
+		<script type="module">
+			document.addEventListener("DOMContentLoaded", () => {
+				const typeLine = document.querySelector(".type-line");
+				if (!typeLine) return;
+
+				const fullText = typeLine.textContent ?? "";
+				if (!fullText) return;
+
+				const prefersReducedMotion = window.matchMedia(
+					"(prefers-reduced-motion: reduce)"
+				).matches;
+				if (prefersReducedMotion) return;
+
+				typeLine.textContent = "";
+				let index = 0;
+				const baseDelay = 48;
+				const variance = 36;
+
+				const typeNext = () => {
+					index += 1;
+					typeLine.textContent = fullText.slice(0, index);
+					if (index < fullText.length) {
+						const jitter = Math.random() * variance;
+						window.setTimeout(typeNext, baseDelay + jitter);
+					}
+				};
+
+				window.setTimeout(typeNext, 320);
+			});
+		</script>
 	</body>
 </html>
