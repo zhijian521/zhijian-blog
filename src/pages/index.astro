@@ -1,4 +1,4 @@
----
+﻿---
 import BaseHead from '../components/BaseHead.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
@@ -9,6 +9,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
+		<div class="code-rain" aria-hidden="true"></div>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
 		<div class="hud-panel" aria-hidden="true">
@@ -31,15 +32,10 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		<main class="page page-home">
 			<section class="terminal terminal-hero">
 				<div class="terminal-bar">
-					<div class="terminal-controls">
-						<span class="terminal-dot is-close" aria-hidden="true"></span>
-						<span class="terminal-dot is-min" aria-hidden="true"></span>
-						<span class="terminal-dot is-max" aria-hidden="true"></span>
-					</div>
 					<div class="terminal-title">yewen@home:~</div>
 				</div>
 				<div class="terminal-body">
-					<div class="matrix-title">耶温主页</div>
+					<div class="matrix-title" data-text="YEWEN HOME">YEWEN HOME</div>
 					<p class="hero-line">
 						<span class="prompt">&gt;</span>{SITE_DESCRIPTION}
 					</p>
