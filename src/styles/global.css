@@ -149,7 +149,7 @@ body .noise-layer {
 }
 
 .data-stream::before {
-	content: "A9F2 7C1D 4B0E 9A11 2F7C 6E3D 0A9B 3C5E\A 1F2A 9C3D 7E01 5B8A 6D2F 8A0C 4E3D\A 7B2A 0F1C 8D3E 9A0B 5E6C 2D1F 3A7B\A 4C2D 6E7F 1A9B 0C3D 8F2A 5D6E 7A1B\A 2A9C 4D0E 6F7B 8C1A 3D5E 9B0F 2C7A\A 8E2C 1F3D 7A9B 4C0E 6D5F 2A1B 9C3E\A 5B7C 2D9A 0E1F 3C6D 8A2B 4F7C 1D9B\A 0F3A 7C2B 9D1E 5A6F 2C8B 4E0D 7A1C\A 3E6A 9B1F 2C7D 4E0A 8F3C 5D2B 0A7C\A 6F2C 8A1B 9C3D 0E7A 5B4F 1D2C 7A9E\A";
+	content: "A9F2 7C1D 4B0E 9A11 2F7C 6E3D\A 1F2A 9C3D 7E01 5B8A 6D2F 8A0C\A 7B2A 0F1C 8D3E 9A0B 5E6C 2D1F\A 4C2D 6E7F 1A9B 0C3D 8F2A 5D6E\A 2A9C 4D0E 6F7B 8C1A 3D5E 9B0F\A 8E2C 1F3D 7A9B 4C0E 6D5F 2A1B\A 5B7C 2D9A 0E1F 3C6D 8A2B 4F7C\A 0F3A 7C2B 9D1E 5A6F 2C8B 4E0D\A 3E6A 9B1F 2C7D 4E0A 8F3C 5D2B\A 6F2C 8A1B 9C3D 0E7A 5B4F 1D2C\A";
 	white-space: pre;
 	display: block;
 	font-size: 10px;
@@ -176,6 +176,120 @@ body .noise-layer {
 	text-transform: uppercase;
 	pointer-events: none;
 	z-index: 6;
+}
+
+.hud-panel.hud-stack {
+	width: 248px;
+	gap: 6px;
+	padding: 12px 14px;
+	letter-spacing: 0.14em;
+	border-color: rgba(99, 243, 255, 0.34);
+	background: linear-gradient(
+		165deg,
+		rgba(7, 12, 18, 0.92),
+		rgba(10, 16, 24, 0.84)
+	);
+	box-shadow:
+		0 0 26px rgba(99, 243, 255, 0.24),
+		inset 0 0 18px rgba(99, 243, 255, 0.08);
+	overflow: hidden;
+	isolation: isolate;
+	animation: hudStackGlow 4.2s ease-in-out infinite;
+}
+
+.hud-panel.hud-stack::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: repeating-linear-gradient(
+		180deg,
+		rgba(99, 243, 255, 0.16) 0,
+		rgba(99, 243, 255, 0.16) 1px,
+		transparent 2px,
+		transparent 6px
+	);
+	opacity: 0.22;
+	mix-blend-mode: screen;
+	transform: translateY(-35%);
+	animation: hudStackSweep 5.8s linear infinite;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.hud-panel.hud-stack::after {
+	content: "";
+	position: absolute;
+	inset: 6px;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 1px rgba(99, 243, 255, 0.14);
+	background:
+		linear-gradient(var(--accent), var(--accent)) left top / 14px 1px no-repeat,
+		linear-gradient(var(--accent), var(--accent)) left top / 1px 14px no-repeat,
+		linear-gradient(var(--accent), var(--accent)) right top / 14px 1px no-repeat,
+		linear-gradient(var(--accent), var(--accent)) right top / 1px 14px no-repeat,
+		linear-gradient(var(--accent), var(--accent)) left bottom / 14px 1px no-repeat,
+		linear-gradient(var(--accent), var(--accent)) left bottom / 1px 14px no-repeat,
+		linear-gradient(var(--accent), var(--accent)) right bottom / 14px 1px no-repeat,
+		linear-gradient(var(--accent), var(--accent)) right bottom / 1px 14px no-repeat;
+	opacity: 0.42;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.hud-panel.hud-stack .hud-row {
+	position: relative;
+	z-index: 1;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 3px 0;
+	border-bottom: 1px dashed rgba(99, 243, 255, 0.18);
+}
+
+.hud-panel.hud-stack .hud-row:last-child {
+	border-bottom: 0;
+}
+
+.hud-panel.hud-stack .hud-row:first-child {
+	margin-bottom: 2px;
+	padding-bottom: 7px;
+	border-bottom: 1px solid rgba(99, 243, 255, 0.34);
+}
+
+.hud-panel.hud-stack .hud-label {
+	width: auto;
+	color: rgba(181, 255, 106, 0.92);
+	text-shadow: 0 0 10px rgba(181, 255, 106, 0.28);
+}
+
+.hud-panel.hud-stack .hud-label::before {
+	content: "[$ ";
+	color: rgba(125, 147, 171, 0.9);
+	letter-spacing: 0;
+}
+
+.hud-panel.hud-stack .hud-label::after {
+	content: " ]";
+	color: rgba(125, 147, 171, 0.9);
+	letter-spacing: 0;
+}
+
+.hud-panel.hud-stack .hud-value {
+	width: auto;
+	max-width: 138px;
+	text-align: right;
+	color: rgba(210, 230, 249, 0.9);
+	letter-spacing: 0.06em;
+	text-shadow: 0 0 10px rgba(99, 243, 255, 0.2);
+}
+
+.hud-panel.hud-stack .hud-row:first-child .hud-label {
+	color: var(--accent);
+}
+
+.hud-panel.hud-stack .hud-row:first-child .hud-value {
+	color: var(--accent-2);
+	letter-spacing: 0.14em;
+	text-shadow: 0 0 12px rgba(181, 255, 106, 0.3);
 }
 
 .hud-row {
@@ -1023,6 +1137,29 @@ mark {
 	}
 	50% {
 		filter: brightness(1.2);
+	}
+}
+
+@keyframes hudStackGlow {
+	0%,
+	100% {
+		box-shadow:
+			0 0 22px rgba(99, 243, 255, 0.2),
+			inset 0 0 14px rgba(99, 243, 255, 0.07);
+	}
+	50% {
+		box-shadow:
+			0 0 30px rgba(99, 243, 255, 0.3),
+			inset 0 0 20px rgba(99, 243, 255, 0.12);
+	}
+}
+
+@keyframes hudStackSweep {
+	0% {
+		transform: translateY(-35%);
+	}
+	100% {
+		transform: translateY(35%);
 	}
 }
 

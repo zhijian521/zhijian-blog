@@ -36,21 +36,22 @@ const allTags = Array.from(
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<div class="hud-panel" aria-hidden="true">
+		<div class="hud-panel hud-stack" aria-hidden="true">
 			<div class="hud-row">
-				<span class="hud-label">cpu</span>
-				<span class="hud-bar" style="--fill: 64%;"></span>
-				<span class="hud-value">64%</span>
+				<span class="hud-label">stack</span>
+				<span class="hud-value">astro 5</span>
 			</div>
 			<div class="hud-row">
-				<span class="hud-label">ram</span>
-				<span class="hud-bar" style="--fill: 52%;"></span>
-				<span class="hud-value">52%</span>
+				<span class="hud-label">lang</span>
+				<span class="hud-value">typescript</span>
 			</div>
 			<div class="hud-row">
-				<span class="hud-label">net</span>
-				<span class="hud-bar" style="--fill: 66%;"></span>
-				<span class="hud-value">66%</span>
+				<span class="hud-label">content</span>
+				<span class="hud-value">markdown/mdx</span>
+			</div>
+			<div class="hud-row">
+				<span class="hud-label">runtime</span>
+				<span class="hud-value">node + vite</span>
 			</div>
 		</div>
 		<main class="page page-grid">
