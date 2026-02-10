@@ -1,0 +1,177 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
+import { collectCategoryTree, encodeCategoryPath } from '../../../utils/blogTaxonomy';
+
+const posts = await getCollection('blog');
+const categories = collectCategoryTree(posts);
+const categoryNodes = categories.map((category) => ({
+	...category,
+	hasChildren: categories.some(
+		(item) => item.path !== category.path && item.path.startsWith(`${category.path}/`)
+	),
+}));
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`${SITE_TITLE} / Categories`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<div class="noise-layer" aria-hidden="true"></div>
+		<div class="data-stream" aria-hidden="true"></div>
+		<main class="page page-grid">
+			<aside class="side-stack">
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-title">navigation</div>
+					</div>
+					<div class="terminal-body">
+						<p class="hero-sub"><a href="/blog/">返回文章列表</a></p>
+						<p class="hero-sub"><a href="/blog/tags/">查看标签索引</a></p>
+					</div>
+				</section>
+			</aside>
+			<section class="terminal terminal-article">
+				<div class="terminal-bar">
+					<div class="terminal-title">categories</div>
+				</div>
+				<div class="terminal-body">
+					<h1>分类索引</h1>
+					<p class="hero-sub">共 {categories.length} 个分类</p>
+					{Boolean(categories.length) && (
+						<p class="hero-sub tree-actions">
+							<button type="button" class="tree-action" data-tree-action="expand-all">
+								全部展开
+							</button>
+							<button type="button" class="tree-action" data-tree-action="collapse-all">
+								全部折叠
+							</button>
+						</p>
+					)}
+					{categories.length ? (
+						<ul class="post-list category-tree">
+							{categoryNodes.map((category) => (
+								<li
+									class="category-tree-item"
+									data-path={category.path}
+									data-depth={category.depth}
+									data-has-children={category.hasChildren ? 'true' : 'false'}
+									data-collapsed="false"
+									style={`--depth:${category.depth};`}
+								>
+									<button
+										type="button"
+										class="tree-toggle"
+										disabled={!category.hasChildren}
+										aria-expanded="true"
+									>
+										{category.hasChildren ? '−' : '·'}
+									</button>
+									<a href={`/blog/categories/${encodeCategoryPath(category.path)}/`}>
+										{category.path}
+									</a>
+									<div class="post-meta">{category.count} 篇文章</div>
+								</li>
+							))}
+						</ul>
+					) : (
+						<p class="hero-sub">暂无分类</p>
+					)}
+				</div>
+			</section>
+		</main>
+		<script type="module">
+			document.addEventListener('DOMContentLoaded', () => {
+				const tree = document.querySelector('.category-tree');
+				if (!tree) return;
+
+				const items = Array.from(tree.querySelectorAll('.category-tree-item'));
+				const itemMap = new Map(
+					items.map((item) => [item.getAttribute('data-path'), item])
+				);
+
+				const isHiddenByAncestor = (item) => {
+					const path = item.getAttribute('data-path') || '';
+					const segments = path.split('/').filter(Boolean);
+
+					for (let index = 1; index < segments.length; index += 1) {
+						const parentPath = segments.slice(0, index).join('/');
+						const parentItem = itemMap.get(parentPath);
+						if (!parentItem) continue;
+
+						if (parentItem.getAttribute('data-collapsed') === 'true') {
+							return true;
+						}
+					}
+
+					return false;
+				};
+
+				const updateTreeView = () => {
+					for (const item of items) {
+						const collapsed = item.getAttribute('data-collapsed') === 'true';
+						const hidden = isHiddenByAncestor(item);
+						item.hidden = hidden;
+
+						const toggle = item.querySelector('.tree-toggle');
+						if (!toggle) continue;
+
+						const hasChildren =
+							item.getAttribute('data-has-children') === 'true';
+						if (!hasChildren) {
+							toggle.textContent = '·';
+							toggle.setAttribute('aria-expanded', 'true');
+							continue;
+						}
+
+						toggle.textContent = collapsed ? '+' : '−';
+						toggle.setAttribute('aria-expanded', String(!collapsed));
+					}
+				};
+
+				tree.addEventListener('click', (event) => {
+					const target = event.target;
+					if (!(target instanceof HTMLElement)) return;
+
+					const actionButton = target.closest('[data-tree-action]');
+					if (actionButton instanceof HTMLButtonElement) {
+						const action = actionButton.getAttribute('data-tree-action');
+						for (const item of items) {
+							if (item.getAttribute('data-has-children') !== 'true') {
+								continue;
+							}
+
+							item.setAttribute(
+								'data-collapsed',
+								action === 'collapse-all' ? 'true' : 'false'
+							);
+						}
+
+						updateTreeView();
+						return;
+					}
+
+					const button = target.closest('.tree-toggle');
+					if (!(button instanceof HTMLButtonElement)) return;
+
+					const item = button.closest('.category-tree-item');
+					if (!(item instanceof HTMLElement)) return;
+
+					if (item.getAttribute('data-has-children') !== 'true') {
+						return;
+					}
+
+					const nextCollapsed =
+						item.getAttribute('data-collapsed') === 'true' ? 'false' : 'true';
+					item.setAttribute('data-collapsed', nextCollapsed);
+					updateTreeView();
+				});
+
+				updateTreeView();
+			});
+		</script>
+	</body>
+</html>

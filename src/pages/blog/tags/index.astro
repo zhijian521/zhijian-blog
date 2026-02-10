@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
+import { collectTags, encodeTag } from '../../../utils/blogTaxonomy';
+
+const posts = await getCollection('blog');
+const tags = collectTags(posts);
+const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`${SITE_TITLE} / Tags`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<div class="noise-layer" aria-hidden="true"></div>
+		<div class="data-stream" aria-hidden="true"></div>
+		<main class="page page-grid">
+			<aside class="side-stack">
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-title">navigation</div>
+					</div>
+					<div class="terminal-body">
+						<p class="hero-sub"><a href="/blog/">返回文章列表</a></p>
+						<p class="hero-sub"><a href="/blog/categories/">查看分类索引</a></p>
+					</div>
+				</section>
+			</aside>
+			<section class="terminal terminal-article">
+				<div class="terminal-bar">
+					<div class="terminal-title">tags</div>
+				</div>
+				<div class="terminal-body">
+					<h1>标签索引</h1>
+					<p class="hero-sub">共 {tags.length} 个标签</p>
+					{tags.length ? (
+						<div class="tag-cloud">
+							{tags.map((tag) => {
+								const ratio = tag.count / maxCount;
+								const size = (0.85 + ratio * 0.9).toFixed(2);
+								const glow = (0.16 + ratio * 0.28).toFixed(2);
+
+								return (
+									<a
+										class="tag-cloud-item"
+										href={`/blog/tags/${encodeTag(tag.name)}/`}
+										style={`--size:${size}rem; --glow:${glow};`}
+									>
+										#{tag.name} <span class="tag-cloud-count">{tag.count}</span>
+									</a>
+								);
+							})}
+						</div>
+					) : (
+						<p class="hero-sub">暂无标签</p>
+					)}
+				</div>
+			</section>
+		</main>
+	</body>
+</html>

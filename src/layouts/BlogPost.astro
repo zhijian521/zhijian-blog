@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseHead from '../components/BaseHead.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import { encodeCategoryPath, encodeTag } from '../utils/blogTaxonomy';
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings?: MarkdownHeading[];
@@ -68,7 +69,9 @@ const {
 							{tags?.length ? (
 								<div class="tag-list">
 									{tags.map((tag) => (
-										<span class="tag">#{tag}</span>
+										<a class="tag" href={`/blog/tags/${encodeTag(tag)}/`}>
+											#{tag}
+										</a>
 									))}
 								</div>
 							) : (
@@ -77,7 +80,15 @@ const {
 						</div>
 						<div>
 							<p class="meta-label">分类</p>
-							{category ? <p>{category}</p> : <p class="hero-sub">暂无分类</p>}
+							{category ? (
+								<p>
+									<a href={`/blog/categories/${encodeCategoryPath(category)}/`}>
+										{category}
+									</a>
+								</p>
+							) : (
+								<p class="hero-sub">暂无分类</p>
+							)}
 						</div>
 					</div>
 				</section>

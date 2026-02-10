@@ -1,6 +1,6 @@
 ﻿---
 import BaseHead from '../components/BaseHead.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { SITE_DESCRIPTION, SITE_LOGO, SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
@@ -36,6 +36,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 					<div class="terminal-title">yewen@home:~</div>
 				</div>
 				<div class="terminal-body">
+					<img class="site-logo" src={SITE_LOGO} alt="Yewen Home logo" width="84" height="84" loading="eager" decoding="async" />
 					<div class="matrix-title" data-text="YEWEN HOME">YEWEN HOME</div>
 					<div class="hero-actions">
 						<a class="hero-action" href="/blog/">ARTICLES</a>

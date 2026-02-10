@@ -1,0 +1,99 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
+import {
+	collectCategoryPrefixes,
+	encodeCategoryPath,
+	sortPostsByPriority,
+} from '../../../utils/blogTaxonomy';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	const categorySet = new Set(collectCategoryPrefixes(posts).keys());
+
+	return [...categorySet].map((category) => ({
+		params: { category: encodeCategoryPath(category) },
+		props: { category },
+	}));
+}
+
+type Props = {
+	category: string;
+};
+
+const { category } = Astro.props as Props;
+const posts = sortPostsByPriority(await getCollection('blog'));
+const prefix = `${category}/`;
+const filteredPosts = posts.filter((post) => {
+	if (!post.data.category) {
+		return false;
+	}
+
+	return post.data.category === category || post.data.category.startsWith(prefix);
+});
+
+const parentSegments = category.split('/').filter(Boolean);
+const breadcrumb = parentSegments.map((segment, index) => {
+	const path = parentSegments.slice(0, index + 1).join('/');
+	return { segment, path };
+});
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`${SITE_TITLE} / Category / ${category}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<div class="noise-layer" aria-hidden="true"></div>
+		<div class="data-stream" aria-hidden="true"></div>
+		<main class="page page-grid">
+			<aside class="side-stack">
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-title">navigation</div>
+					</div>
+					<div class="terminal-body">
+						<p class="hero-sub"><a href="/blog/">返回文章列表</a></p>
+						<p class="hero-sub"><a href="/blog/categories/">返回分类索引</a></p>
+						<p class="hero-sub">
+							{breadcrumb.map((item, index) => (
+								<>
+									{index > 0 && <span> / </span>}
+									<a href={`/blog/categories/${encodeCategoryPath(item.path)}/`}>
+										{item.segment}
+									</a>
+								</>
+							))}
+						</p>
+					</div>
+				</section>
+			</aside>
+			<section class="terminal terminal-article">
+				<div class="terminal-bar">
+					<div class="terminal-title">category</div>
+				</div>
+				<div class="terminal-body">
+					<h1>{category}</h1>
+					<p class="hero-sub">共 {filteredPosts.length} 篇文章（含子分类）</p>
+					{filteredPosts.length ? (
+						<ul class="post-list">
+							{filteredPosts.map((post: CollectionEntry<'blog'>) => (
+								<li>
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									<div class="post-meta">
+										<FormattedDate date={post.data.pubDate} /> · {post.data.description}
+									</div>
+								</li>
+							))}
+						</ul>
+					) : (
+						<p class="hero-sub">暂无文章</p>
+					)}
+				</div>
+			</section>
+		</main>
+	</body>
+</html>

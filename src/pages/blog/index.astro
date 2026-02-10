@@ -4,28 +4,90 @@ import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import {
+	collectCategories,
+	collectTags,
+	encodeCategoryPath,
+	encodeTag,
+	sortPostsByPriority,
+} from '../../utils/blogTaxonomy';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const posts = sortPostsByPriority(await getCollection('blog'));
 
-let gitLines: string[] = [];
+const contributionWeeks = 10;
+const contributionWindowDays = contributionWeeks * 7;
+const formatDateKey = (date: Date) => {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+
+	return `${year}-${month}-${day}`;
+};
+
+const endDate = new Date();
+endDate.setHours(0, 0, 0, 0);
+
+const startDate = new Date(endDate);
+startDate.setDate(startDate.getDate() - (contributionWindowDays - 1));
+
+const commitCountByDate = new Map<string, number>();
+
 try {
+	const sinceDate = formatDateKey(startDate);
 	const output = execSync(
-		'git log --since="30 days ago" --pretty=format:%h %s --max-count=8',
+		`git log --since="${sinceDate}" --date=short --pretty=format:"%ad"`,
 		{ encoding: 'utf8' }
 	);
-	gitLines = output
-		.split('\n')
-		.map((line) => line.trim())
-		.filter(Boolean);
+
+	for (const line of output.split('\n')) {
+		const dateKey = line.trim();
+		if (!dateKey) {
+			continue;
+		}
+
+		commitCountByDate.set(dateKey, (commitCountByDate.get(dateKey) ?? 0) + 1);
+	}
 } catch (error) {
-	gitLines = ['(未能读取 git 提交记录)'];
+	// Ignore git errors and render empty activity map.
 }
 
-const allTags = Array.from(
-	new Set(posts.flatMap((post) => post.data.tags ?? []))
-).slice(0, 10);
+const contributionDays = Array.from({ length: contributionWindowDays }, (_, index) => {
+	const date = new Date(startDate);
+	date.setDate(startDate.getDate() + index);
+
+	const key = formatDateKey(date);
+	const count = commitCountByDate.get(key) ?? 0;
+
+	return {
+		key,
+		count,
+		label: `${key} · ${count} 次提交`,
+	};
+});
+
+const maxContribution = contributionDays.reduce(
+	(max, day) => Math.max(max, day.count),
+	0
+);
+const getContributionLevel = (count: number) => {
+	if (count === 0) {
+		return 0;
+	}
+
+	if (maxContribution <= 1) {
+		return 4;
+	}
+
+	return Math.min(4, Math.max(1, Math.ceil((count / maxContribution) * 4)));
+};
+
+const contributionCells = contributionDays.map((day) => ({
+	...day,
+	level: getContributionLevel(day.count),
+}));
+
+const allTags = collectTags(posts).slice(0, 12);
+const allCategories = collectCategories(posts);
 ---
 
 <!doctype html>
@@ -38,47 +100,81 @@ const allTags = Array.from(
 		<div class="data-stream" aria-hidden="true"></div>
 		<main class="page page-grid">
 			<aside class="side-stack">
-				<section class="terminal">
+				<section class="terminal profile-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">profile</div>
 					</div>
 					<div class="terminal-body">
-						<div class="meta-list">
-							<div>用户：耶温</div>
-							<div>角色：前端 / 设计 / 写作者</div>
-							<div>状态：online</div>
-							<div>关注：UI / 工具 / 复盘</div>
-						</div>
 						<p class="hero-sub">
 							<span class="prompt">$</span>whoami
+						</p>
+						<div class="meta-list">
+							<div>用户：耶温</div>
+							<div>角色：前端 / 学习 / 生活</div>
+							<div>地址：陕西 · 西安</div>
+							<div class="profile-status"><span class="profile-dot" aria-hidden="true"></span>状态：coding & studying</div>
+						</div>
+						<p class="hero-sub profile-linkline">
+							<span class="prompt">$</span><a href="https://www.yuwb.dev">https://yuwb.dev</a>
 						</p>
 					</div>
 				</section>
 				<section class="terminal">
 					<div class="terminal-bar">
-						<div class="terminal-title">git activity</div>
+						<div class="terminal-title">commits</div>
 					</div>
 					<div class="terminal-body">
-						<p class="hero-sub">
-							<span class="prompt">$</span>git log --since="30 days ago" --oneline
-						</p>
-						<ul class="terminal-list">
-							{gitLines.map((line) => (
-								<li>{line}</li>
-							))}
-						</ul>
+						<div>
+							<p class="meta-label">提交日历</p>
+							<div
+								class="contribution-grid"
+								style={`--weeks:${contributionWeeks}`}
+								role="img"
+								aria-label={`最近 ${contributionWeeks} 周提交日历`}
+							>
+								{contributionCells.map((day) => (
+									<span
+										class={`contribution-cell level-${day.level}`}
+										title={day.label}
+									></span>
+								))}
+							</div>
+						</div>
 						<div>
 							<p class="meta-label">标签索引</p>
 							{allTags.length ? (
 								<div class="tag-list">
 									{allTags.map((tag) => (
-										<span class="tag">#{tag}</span>
+										<a class="tag" href={`/blog/tags/${encodeTag(tag.name)}/`}>
+											#{tag.name}
+										</a>
 									))}
 								</div>
 							) : (
 								<p class="hero-sub">暂无标签</p>
 							)}
 						</div>
+						<div>
+							<p class="meta-label">分类索引</p>
+							{allCategories.length ? (
+								<div class="tag-list">
+									{allCategories.map((category) => (
+										<a
+											class="tag"
+											href={`/blog/categories/${encodeCategoryPath(category.name)}/`}
+										>
+											{category.name}
+										</a>
+									))}
+								</div>
+							) : (
+								<p class="hero-sub">暂无分类</p>
+							)}
+						</div>
+						<p class="hero-sub">
+							<a href="/blog/tags/">查看全部标签</a> ·
+							<a href="/blog/categories/">查看全部分类</a>
+						</p>
 					</div>
 				</section>
 			</aside>
@@ -100,11 +196,26 @@ const allTags = Array.from(
 								<div class="post-meta">
 									<FormattedDate date={post.data.pubDate} /> · {post.data.description}
 								</div>
+								{(post.data.category || post.data.tags?.length) && (
+									<div class="post-meta taxonomy-links">
+										{post.data.category && (
+											<a
+												href={`/blog/categories/${encodeCategoryPath(post.data.category)}/`}
+											>
+												{post.data.category}
+											</a>
+										)}
+										{post.data.tags?.slice(0, 3).map((tag) => (
+											<a href={`/blog/tags/${encodeTag(tag)}/`}>#{tag}</a>
+										))}
+									</div>
+								)}
 							</li>
 						))}
 					</ul>
 				</div>
 			</section>
 		</main>
+		
 	</body>
 </html>
