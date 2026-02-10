@@ -13,9 +13,6 @@
 	--terminal-bar: rgba(12, 18, 26, 0.92);
 	--glow-soft: 0 0 22px rgba(99, 243, 255, 0.22);
 	--glow-strong: 0 0 40px rgba(99, 243, 255, 0.35);
-	--terminal-dot-1: #ff5f56;
-	--terminal-dot-2: #ffbd2e;
-	--terminal-dot-3: #27c93f;
 	--font-main: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei UI",
 		"PingFang SC", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
 }
@@ -509,30 +506,6 @@ main::after {
 	color: var(--accent-2);
 	text-shadow: 0 0 12px rgba(181, 255, 106, 0.4);
 	animation: pulse 2.8s ease-in-out infinite;
-}
-
-.terminal-controls {
-	display: flex;
-	gap: 6px;
-}
-
-.terminal-dot {
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-}
-
-.terminal-dot.is-close {
-	background: var(--terminal-dot-1);
-}
-
-.terminal-dot.is-min {
-	background: var(--terminal-dot-2);
-}
-
-.terminal-dot.is-max {
-	background: var(--terminal-dot-3);
 }
 
 .terminal-title {
