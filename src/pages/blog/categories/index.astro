@@ -46,11 +46,11 @@ for (const items of childrenByParent.values()) {
 			<aside class="side-stack side-stack--blog-width">
 				<section class="terminal">
 					<div class="terminal-bar">
-						<div class="terminal-title">navigation</div>
+						<div class="terminal-title">NAV</div>
 					</div>
-					<div class="terminal-body">
-						<p class="hero-sub"><a href="/blog/">返回文章列表</a></p>
-						<p class="hero-sub"><a href="/blog/tags/">查看标签索引</a></p>
+					<div class="terminal-body nav-actions">
+						<a class="hero-action" href="/blog/">查看文章列表</a>
+						<a class="hero-action" href="/blog/tags/">查看标签索引</a>
 					</div>
 				</section>
 				<section class="terminal">
@@ -70,7 +70,7 @@ for (const items of childrenByParent.values()) {
 					<div class="terminal-title">categories</div>
 				</div>
 				<div class="terminal-body">
-					<h1>分类索引</h1>
+					<h1 class="taxonomy-title">分类索引</h1>
 					<p class="hero-sub">每个分类同时显示直属文章数与包含子分类后的总文章数。</p>
 
 					{rootItems.length ? (

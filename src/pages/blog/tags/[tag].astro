@@ -1,12 +1,9 @@
 ---
-import { execSync } from 'node:child_process';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseHead from '../../../components/BaseHead.astro';
 import FormattedDate from '../../../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
 import {
-	collectCategories,
-	collectTags,
 	encodeCategoryPath,
 	encodeTag,
 	getPostPath,
@@ -30,81 +27,6 @@ type Props = {
 const { tag } = Astro.props as Props;
 const posts = sortPostsByPriority(await getCollection('blog'));
 const filteredPosts = posts.filter((post) => (post.data.tags ?? []).includes(tag));
-
-const contributionWeeks = 10;
-const contributionWindowDays = contributionWeeks * 7;
-const formatDateKey = (date: Date) => {
-	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, '0');
-	const day = String(date.getDate()).padStart(2, '0');
-
-	return `${year}-${month}-${day}`;
-};
-
-const endDate = new Date();
-endDate.setHours(0, 0, 0, 0);
-
-const startDate = new Date(endDate);
-startDate.setDate(startDate.getDate() - (contributionWindowDays - 1));
-
-const commitCountByDate = new Map<string, number>();
-
-try {
-	const sinceDate = formatDateKey(startDate);
-	const output = execSync(
-		`git log --since="${sinceDate}" --date=short --pretty=format:"%ad"`,
-		{ encoding: 'utf8' }
-	);
-
-	for (const line of output.split('\n')) {
-		const dateKey = line.trim();
-		if (!dateKey) {
-			continue;
-		}
-
-		commitCountByDate.set(dateKey, (commitCountByDate.get(dateKey) ?? 0) + 1);
-	}
-} catch {
-	// Ignore git errors and render empty activity map.
-}
-
-const contributionDays = Array.from({ length: contributionWindowDays }, (_, index) => {
-	const date = new Date(startDate);
-	date.setDate(startDate.getDate() + index);
-
-	const key = formatDateKey(date);
-	const count = commitCountByDate.get(key) ?? 0;
-
-	return {
-		key,
-		count,
-		label: `${key} · ${count} 次提交`,
-	};
-});
-
-const maxContribution = contributionDays.reduce(
-	(max, day) => Math.max(max, day.count),
-	0
-);
-const getContributionLevel = (count: number) => {
-	if (count === 0) {
-		return 0;
-	}
-
-	if (maxContribution <= 1) {
-		return 4;
-	}
-
-	return Math.min(4, Math.max(1, Math.ceil((count / maxContribution) * 4)));
-};
-
-const contributionCells = contributionDays.map((day) => ({
-	...day,
-	level: getContributionLevel(day.count),
-}));
-
-const allTags = collectTags(posts);
-const allCategories = collectCategories(posts);
 ---
 
 <!doctype html>
@@ -116,8 +38,8 @@ const allCategories = collectCategories(posts);
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
 		<main class="page page-grid">
-			<aside class="side-stack">
-				<section class="terminal profile-panel">
+			<aside class="side-stack side-stack--blog-width">
+				<section class="terminal profile-panel profile-panel--compact">
 					<div class="terminal-bar">
 						<div class="terminal-title">profile</div>
 					</div>
@@ -129,82 +51,32 @@ const allCategories = collectCategories(posts);
 							<div>用户：耶温</div>
 							<div>角色：前端 / 学习 / 生活</div>
 							<div>地址：陕西 · 西安</div>
-							<div class="profile-status">
-								<span class="profile-dot" aria-hidden="true"></span>状态：coding & studying
-							</div>
+							<div class="profile-status"><span class="profile-dot" aria-hidden="true"></span>状态：coding & studying</div>
 						</div>
 						<p class="hero-sub profile-linkline">
 							<span class="prompt">$</span><a href="https://www.yuwb.dev">https://yuwb.dev</a>
 						</p>
 					</div>
 				</section>
+
 				<section class="terminal">
 					<div class="terminal-bar">
-						<div class="terminal-title">navigation</div>
+						<div class="terminal-title">NAV</div>
 					</div>
-					<div class="terminal-body">
-						<p class="hero-sub"><a href="/blog/">返回文章列表</a></p>
-						<p class="hero-sub"><a href="/blog/tags/">返回标签索引</a></p>
+					<div class="terminal-body nav-actions">
+						<a class="hero-action" href="/blog/">查看文章列表</a>
+						<a class="hero-action" href="/blog/tags/">返回标签索引</a>
 						<p class="hero-sub">当前标签：#{tag}</p>
 					</div>
 				</section>
-				<section class="terminal">
-					<div class="terminal-bar">
-						<div class="terminal-title">commits</div>
-					</div>
-					<div class="terminal-body">
-						<div>
-							<p class="meta-label">提交日历</p>
-							<div
-								class="contribution-grid"
-								style={`--weeks:${contributionWeeks}`}
-								role="img"
-								aria-label={`最近 ${contributionWeeks} 周提交日历`}
-							>
-								{contributionCells.map((day) => (
-									<span class={`contribution-cell level-${day.level}`} title={day.label}></span>
-								))}
-							</div>
-						</div>
-						<div>
-							<p class="meta-label">标签索引</p>
-							{allTags.length ? (
-								<div class="tag-list tag-list--preview">
-									{allTags.map((sidebarTag) => (
-										<a class="tag" href={`/blog/tags/${encodeTag(sidebarTag.name)}/`}>
-											#{sidebarTag.name}
-										</a>
-									))}
-								</div>
-							) : (
-								<p class="hero-sub">暂无标签</p>
-							)}
-							<p class="hero-sub taxonomy-more"><a href="/blog/tags/">查看更多标签 →</a></p>
-						</div>
-						<div>
-							<p class="meta-label">分类索引</p>
-							{allCategories.length ? (
-								<div class="tag-list tag-list--preview">
-									{allCategories.map((category) => (
-										<a class="tag" href={`/blog/categories/${encodeCategoryPath(category.name)}/`}>
-											{category.name}
-										</a>
-									))}
-								</div>
-							) : (
-								<p class="hero-sub">暂无分类</p>
-							)}
-							<p class="hero-sub taxonomy-more"><a href="/blog/categories/">查看更多分类 →</a></p>
-						</div>
-					</div>
-				</section>
 			</aside>
+
 			<section class="terminal terminal-article">
 				<div class="terminal-bar">
 					<div class="terminal-title">tag</div>
 				</div>
 				<div class="terminal-body">
-					<h1>#{tag}</h1>
+					<h1 class="taxonomy-title">#{tag}</h1>
 					<p class="hero-sub">共 {filteredPosts.length} 篇文章</p>
 					{filteredPosts.length ? (
 						<ul class="post-list post-list--cards">

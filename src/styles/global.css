@@ -1417,12 +1417,7 @@ body[data-tag-style="tactical"] .taxonomy-links a:focus-visible {
 
 .taxonomy-title {
 	font-weight: 400;
-	font-size: 1.48rem;
-}
-
-.blog-list-article .terminal-body > div:first-child > h1 {
-	font-weight: 400;
-	font-size: 1.48rem;
+	font-size: 1.34rem;
 }
 
 .nav-actions {
