@@ -1,56 +1,167 @@
 ---
+import { execSync } from 'node:child_process';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseHead from '../../../components/BaseHead.astro';
 import FormattedDate from '../../../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
 import {
-	collectCategoryPrefixes,
-	encodeCategoryPath,
+	collectCategories,
+	collectTags,
+	encodeTag,
+	getPostPath,
 	sortPostsByPriority,
 } from '../../../utils/blogTaxonomy';
+import {
+	buildCategoryBreadcrumb,
+	buildCategoryDirectory,
+	encodeCategoryPath,
+	filterPostsByCategory,
+	normalizeCategoryPath,
+} from '../../../utils/categoryDirectory';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
-	const categorySet = new Set(collectCategoryPrefixes(posts).keys());
+	const directory = buildCategoryDirectory(posts);
 
-	return [...categorySet].map((category) => ({
-		params: { category: encodeCategoryPath(category) },
-		props: { category },
+	return directory.map((item) => ({
+		params: { category: item.path },
+		props: { categoryPath: item.path },
 	}));
 }
 
 type Props = {
-	category: string;
+	categoryPath: string;
 };
 
-const { category } = Astro.props as Props;
+const { categoryPath } = Astro.props as Props;
+const normalizedCategoryPath = normalizeCategoryPath(categoryPath);
+
 const posts = sortPostsByPriority(await getCollection('blog'));
-const prefix = `${category}/`;
-const filteredPosts = posts.filter((post) => {
-	if (!post.data.category) {
-		return false;
+const directory = buildCategoryDirectory(posts);
+
+const currentCategory = directory.find((item) => item.path === normalizedCategoryPath) ?? null;
+if (!currentCategory) {
+	throw new Error(`Category not found: ${normalizedCategoryPath}`);
+}
+
+const directPosts = filterPostsByCategory(posts, normalizedCategoryPath, 'direct');
+const treePosts = filterPostsByCategory(posts, normalizedCategoryPath, 'tree');
+const breadcrumb = buildCategoryBreadcrumb(normalizedCategoryPath);
+const childCategories = directory
+	.filter((item) => item.parentPath === normalizedCategoryPath)
+	.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+
+const contributionWeeks = 10;
+const contributionWindowDays = contributionWeeks * 7;
+const formatDateKey = (date: Date) => {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+
+	return `${year}-${month}-${day}`;
+};
+
+const endDate = new Date();
+endDate.setHours(0, 0, 0, 0);
+
+const startDate = new Date(endDate);
+startDate.setDate(startDate.getDate() - (contributionWindowDays - 1));
+
+const commitCountByDate = new Map<string, number>();
+
+try {
+	const sinceDate = formatDateKey(startDate);
+	const output = execSync(
+		`git log --since="${sinceDate}" --date=short --pretty=format:"%ad"`,
+		{ encoding: 'utf8' }
+	);
+
+	for (const line of output.split('\n')) {
+		const dateKey = line.trim();
+		if (!dateKey) {
+			continue;
+		}
+
+		commitCountByDate.set(dateKey, (commitCountByDate.get(dateKey) ?? 0) + 1);
+	}
+} catch {
+	// Ignore git errors and render empty activity map.
+}
+
+const contributionDays = Array.from({ length: contributionWindowDays }, (_, index) => {
+	const date = new Date(startDate);
+	date.setDate(startDate.getDate() + index);
+
+	const key = formatDateKey(date);
+	const count = commitCountByDate.get(key) ?? 0;
+
+	return {
+		key,
+		count,
+		label: `${key} · ${count} 次提交`,
+	};
+});
+
+const maxContribution = contributionDays.reduce(
+	(max, day) => Math.max(max, day.count),
+	0
+);
+const getContributionLevel = (count: number) => {
+	if (count === 0) {
+		return 0;
 	}
 
-	return post.data.category === category || post.data.category.startsWith(prefix);
-});
+	if (maxContribution <= 1) {
+		return 4;
+	}
 
-const parentSegments = category.split('/').filter(Boolean);
-const breadcrumb = parentSegments.map((segment, index) => {
-	const path = parentSegments.slice(0, index + 1).join('/');
-	return { segment, path };
-});
+	return Math.min(4, Math.max(1, Math.ceil((count / maxContribution) * 4)));
+};
+
+const contributionCells = contributionDays.map((day) => ({
+	...day,
+	level: getContributionLevel(day.count),
+}));
+
+const allTags = collectTags(posts);
+const allCategories = collectCategories(posts);
 ---
 
 <!doctype html>
 <html lang="zh-CN">
 	<head>
-		<BaseHead title={`${SITE_TITLE} / Category / ${category}`} description={SITE_DESCRIPTION} />
+		<BaseHead
+			title={`${SITE_TITLE} / Category / ${normalizedCategoryPath}`}
+			description={SITE_DESCRIPTION}
+		/>
 	</head>
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
 		<main class="page page-grid">
 			<aside class="side-stack">
+				<section class="terminal profile-panel">
+					<div class="terminal-bar">
+						<div class="terminal-title">profile</div>
+					</div>
+					<div class="terminal-body">
+						<p class="hero-sub">
+							<span class="prompt">$</span>whoami
+						</p>
+						<div class="meta-list">
+							<div>用户：耶温</div>
+							<div>角色：前端 / 学习 / 生活</div>
+							<div>地址：陕西 · 西安</div>
+							<div class="profile-status">
+								<span class="profile-dot" aria-hidden="true"></span>状态：coding & studying
+							</div>
+						</div>
+						<p class="hero-sub profile-linkline">
+							<span class="prompt">$</span><a href="https://www.yuwb.dev">https://yuwb.dev</a>
+						</p>
+					</div>
+				</section>
+
 				<section class="terminal">
 					<div class="terminal-bar">
 						<div class="terminal-title">navigation</div>
@@ -58,34 +169,128 @@ const breadcrumb = parentSegments.map((segment, index) => {
 					<div class="terminal-body">
 						<p class="hero-sub"><a href="/blog/">返回文章列表</a></p>
 						<p class="hero-sub"><a href="/blog/categories/">返回分类索引</a></p>
-						<p class="hero-sub">
+						<p class="hero-sub">当前分类：{normalizedCategoryPath}</p>
+						<p class="hero-sub breadcrumb-line">
 							{breadcrumb.map((item, index) => (
 								<>
 									{index > 0 && <span> / </span>}
 									<a href={`/blog/categories/${encodeCategoryPath(item.path)}/`}>
-										{item.segment}
+										{item.name}
 									</a>
 								</>
 							))}
 						</p>
 					</div>
 				</section>
+
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-title">commits</div>
+					</div>
+					<div class="terminal-body">
+						<div>
+							<p class="meta-label">提交日历</p>
+							<div
+								class="contribution-grid"
+								style={`--weeks:${contributionWeeks}`}
+								role="img"
+								aria-label={`最近 ${contributionWeeks} 周提交日历`}
+							>
+								{contributionCells.map((day) => (
+									<span class={`contribution-cell level-${day.level}`} title={day.label}></span>
+								))}
+							</div>
+						</div>
+
+						<div>
+							<p class="meta-label">标签索引</p>
+							{allTags.length ? (
+								<div class="tag-list tag-list--preview">
+									{allTags.map((tag) => (
+										<a class="tag" href={`/blog/tags/${encodeTag(tag.name)}/`}>
+											#{tag.name}
+										</a>
+									))}
+								</div>
+							) : (
+								<p class="hero-sub">暂无标签</p>
+							)}
+							<p class="hero-sub taxonomy-more"><a href="/blog/tags/">查看更多标签 →</a></p>
+						</div>
+
+						<div>
+							<p class="meta-label">分类索引</p>
+							{allCategories.length ? (
+								<div class="tag-list tag-list--preview">
+									{allCategories.map((category) => (
+										<a class="tag" href={`/blog/categories/${encodeCategoryPath(category.name)}/`}>
+											{category.name}
+										</a>
+									))}
+								</div>
+							) : (
+								<p class="hero-sub">暂无分类</p>
+							)}
+							<p class="hero-sub taxonomy-more"><a href="/blog/categories/">查看更多分类 →</a></p>
+						</div>
+					</div>
+				</section>
+
+				<section class="terminal">
+					<div class="terminal-bar">
+						<div class="terminal-title">children</div>
+					</div>
+					<div class="terminal-body">
+						{childCategories.length ? (
+							<ul class="category-children-list">
+								{childCategories.map((child) => (
+									<li>
+										<a href={`/blog/categories/${encodeCategoryPath(child.path)}/`}>
+											{child.name}
+											<span>{child.totalCount}</span>
+										</a>
+									</li>
+								))}
+							</ul>
+						) : (
+							<p class="hero-sub">当前分类暂无子分类</p>
+						)}
+					</div>
+				</section>
 			</aside>
+
 			<section class="terminal terminal-article">
 				<div class="terminal-bar">
 					<div class="terminal-title">category</div>
 				</div>
 				<div class="terminal-body">
-					<h1>{category}</h1>
-					<p class="hero-sub">共 {filteredPosts.length} 篇文章（含子分类）</p>
-					{filteredPosts.length ? (
-						<ul class="post-list">
-							{filteredPosts.map((post: CollectionEntry<'blog'>) => (
-								<li>
-									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-									<div class="post-meta">
+					<h1>{normalizedCategoryPath}</h1>
+					<p class="hero-sub">直属文章 {directPosts.length} 篇 · 含子分类 {treePosts.length} 篇</p>
+
+					{treePosts.length ? (
+						<ul class="post-list post-list--cards category-post-list">
+							{treePosts.map((post: CollectionEntry<'blog'>) => (
+								<li class="post-card">
+									<div class="post-card-head">
+										<span class="post-card-id">ID {post.data.id}</span>
+										<span class="post-card-date"><FormattedDate date={post.data.pubDate} /></span>
+									</div>
+									<a class="post-card-title" href={getPostPath(post.data.id)}>{post.data.title}</a>
+									<div class="post-meta post-card-desc">
 										<FormattedDate date={post.data.pubDate} /> · {post.data.description}
 									</div>
+									{(post.data.category || post.data.tags?.length) && (
+										<div class="post-meta taxonomy-links">
+											{post.data.category && (
+												<a href={`/blog/categories/${encodeCategoryPath(post.data.category)}/`}>
+													{post.data.category}
+												</a>
+											)}
+											{post.data.tags?.slice(0, 3).map((tag) => (
+												<a href={`/blog/tags/${encodeTag(tag)}/`}>#{tag}</a>
+											))}
+										</div>
+									)}
 								</li>
 							))}
 						</ul>
@@ -97,3 +302,4 @@ const breadcrumb = parentSegments.map((segment, index) => {
 		</main>
 	</body>
 </html>
+

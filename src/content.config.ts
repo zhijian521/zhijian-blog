@@ -16,7 +16,7 @@ const blog = defineCollection({
 			update: z.coerce.date().optional(),
 			tags: z.array(z.string()).optional(),
 			category: z.string().optional(),
-			id: z.string().optional(),
+			id: z.string().trim().min(1),
 			sticky: z.union([z.boolean(), z.number()]).optional(),
 			heroImage: image().optional(),
 		})
@@ -25,6 +25,7 @@ const blog = defineCollection({
 			path: ['pubDate'],
 		})
 		.transform((data) => ({
+			id: data.id,
 			title: data.title,
 			description: data.description?.trim() || data.excerpt?.trim() || data.title,
 			pubDate: data.pubDate ?? data.date ?? new Date('1970-01-01'),

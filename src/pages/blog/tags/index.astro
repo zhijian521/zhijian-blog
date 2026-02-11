@@ -35,21 +35,21 @@ const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
 				</div>
 				<div class="terminal-body">
 					<h1>标签索引</h1>
-					<p class="hero-sub">共 {tags.length} 个标签</p>
+					<p class="hero-sub">共 {tags.length} 个标签，点击查看对应文章集合。</p>
 					{tags.length ? (
-						<div class="tag-cloud">
+						<div class="tag-cloud tag-cloud--enhanced">
 							{tags.map((tag) => {
 								const ratio = tag.count / maxCount;
-								const size = (0.85 + ratio * 0.9).toFixed(2);
-								const glow = (0.16 + ratio * 0.28).toFixed(2);
+								const size = (0.92 + ratio * 0.26).toFixed(2);
 
 								return (
 									<a
-										class="tag-cloud-item"
+										class="tag tag-cloud-pill"
 										href={`/blog/tags/${encodeTag(tag.name)}/`}
-										style={`--size:${size}rem; --glow:${glow};`}
+										style={`--size:${size}rem;`}
 									>
-										#{tag.name} <span class="tag-cloud-count">{tag.count}</span>
+										#{tag.name}
+										<span class="tag-cloud-count">{tag.count}篇</span>
 									</a>
 								);
 							})}

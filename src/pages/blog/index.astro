@@ -9,6 +9,7 @@ import {
 	collectTags,
 	encodeCategoryPath,
 	encodeTag,
+	getPostPath,
 	sortPostsByPriority,
 } from '../../utils/blogTaxonomy';
 
@@ -86,7 +87,7 @@ const contributionCells = contributionDays.map((day) => ({
 	level: getContributionLevel(day.count),
 }));
 
-const allTags = collectTags(posts).slice(0, 12);
+const allTags = collectTags(posts);
 const allCategories = collectCategories(posts);
 ---
 
@@ -143,7 +144,7 @@ const allCategories = collectCategories(posts);
 						<div>
 							<p class="meta-label">标签索引</p>
 							{allTags.length ? (
-								<div class="tag-list">
+								<div class="tag-list tag-list--preview">
 									{allTags.map((tag) => (
 										<a class="tag" href={`/blog/tags/${encodeTag(tag.name)}/`}>
 											#{tag.name}
@@ -153,11 +154,12 @@ const allCategories = collectCategories(posts);
 							) : (
 								<p class="hero-sub">暂无标签</p>
 							)}
+							<p class="hero-sub taxonomy-more"><a href="/blog/tags/">查看更多标签 →</a></p>
 						</div>
 						<div>
 							<p class="meta-label">分类索引</p>
 							{allCategories.length ? (
-								<div class="tag-list">
+								<div class="tag-list tag-list--preview">
 									{allCategories.map((category) => (
 										<a
 											class="tag"
@@ -170,11 +172,8 @@ const allCategories = collectCategories(posts);
 							) : (
 								<p class="hero-sub">暂无分类</p>
 							)}
+							<p class="hero-sub taxonomy-more"><a href="/blog/categories/">查看更多分类 →</a></p>
 						</div>
-						<p class="hero-sub">
-							<a href="/blog/tags/">查看全部标签</a> ·
-							<a href="/blog/categories/">查看全部分类</a>
-						</p>
 					</div>
 				</section>
 			</aside>
@@ -185,15 +184,19 @@ const allCategories = collectCategories(posts);
 				<div class="terminal-body">
 					<div>
 						<h1>文章列表</h1>
-						<p class="hero-sub">执行 <code>open /blog/&lt;slug&gt;</code> 进入详情。</p>
+						<p class="hero-sub">执行 <code>open /&lt;id&gt;</code> 进入详情。</p>
 					</div>
-					<ul class="post-list">
+					<ul class="post-list post-list--cards">
 						{posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
+							<li class="post-card">
+								<div class="post-card-head">
+									<span class="post-card-id">ID {post.data.id}</span>
+									<span class="post-card-date"><FormattedDate date={post.data.pubDate} /></span>
+								</div>
+								<a class="post-card-title" href={getPostPath(post.data.id)}>
 									{post.data.title}
 								</a>
-								<div class="post-meta">
+								<div class="post-meta post-card-desc">
 									<FormattedDate date={post.data.pubDate} /> · {post.data.description}
 								</div>
 								{(post.data.category || post.data.tags?.length) && (
