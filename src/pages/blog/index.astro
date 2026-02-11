@@ -102,9 +102,9 @@ const allCategories = collectCategories(posts);
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<main class="page page-grid">
-			<aside class="side-stack side-stack--blog-width">
-				<section class="terminal profile-panel profile-panel--compact">
+		<main class="page page-grid page-grid--sticky-side">
+			<aside class="side-stack side-stack--blog-width" style="--side-rows:minmax(0,0.9fr) minmax(0,1.1fr);">
+				<section class="terminal profile-panel profile-panel--compact profile-panel--home sticky-side-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">profile</div>
 					</div>
@@ -139,7 +139,7 @@ const allCategories = collectCategories(posts);
 						</div>
 					</div>
 				</section>
-				<section class="terminal taxonomy-panel taxonomy-panel--compact">
+				<section class="terminal taxonomy-panel taxonomy-panel--compact sticky-side-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">NAV</div>
 					</div>

@@ -1,4 +1,4 @@
----
+﻿---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseHead from '../../../components/BaseHead.astro';
 import FormattedDate from '../../../components/FormattedDate.astro';
@@ -37,36 +37,22 @@ const filteredPosts = posts.filter((post) => (post.data.tags ?? []).includes(tag
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<main class="page page-grid">
-			<aside class="side-stack side-stack--blog-width">
-				<section class="terminal profile-panel profile-panel--compact">
-					<div class="terminal-bar">
-						<div class="terminal-title">profile</div>
-					</div>
-					<div class="terminal-body">
-						<p class="hero-sub">
-							<span class="prompt">$</span>whoami
-						</p>
-						<div class="meta-list">
-							<div>用户：耶温</div>
-							<div>角色：前端 / 学习 / 生活</div>
-							<div>地址：陕西 · 西安</div>
-							<div class="profile-status"><span class="profile-dot" aria-hidden="true"></span>状态：coding & studying</div>
-						</div>
-						<p class="hero-sub profile-linkline">
-							<span class="prompt">$</span><a href="https://www.yuwb.dev">https://yuwb.dev</a>
-						</p>
-					</div>
-				</section>
-
-				<section class="terminal">
+		<main class="page page-grid page-grid--sticky-side page-grid--sticky-side-auto">
+			<aside class="side-stack side-stack--blog-width" style="--side-panels:1;">
+				<section class="terminal sticky-side-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">NAV</div>
 					</div>
-					<div class="terminal-body nav-actions">
-						<a class="hero-action" href="/blog/">查看文章列表</a>
-						<a class="hero-action" href="/blog/tags/">返回标签索引</a>
-						<p class="hero-sub">当前标签：#{tag}</p>
+					<div class="terminal-body nav-actions nav-actions--cyber">
+						<div class="nav-cyber-context">
+							<p class="nav-cyber-kicker">ACTIVE TAG</p>
+							<a class="nav-cyber-pill" href={`/blog/tags/${encodeTag(tag)}/`}>#{tag}</a>
+							<p class="nav-cyber-note">命中 {filteredPosts.length} 篇文章</p>
+						</div>
+						<div class="nav-cyber-buttons">
+							<a class="hero-action" href="/blog/">查看文章列表</a>
+							<a class="hero-action" href="/blog/tags/">返回标签索引</a>
+						</div>
 					</div>
 				</section>
 			</aside>
@@ -88,7 +74,7 @@ const filteredPosts = posts.filter((post) => (post.data.tags ?? []).includes(tag
 									</div>
 									<a class="post-card-title" href={getPostPath(post.data.id)}>{post.data.title}</a>
 									<div class="post-meta post-card-desc">
-										<FormattedDate date={post.data.pubDate} /> · {post.data.description}
+										<FormattedDate date={post.data.pubDate} /> 路 {post.data.description}
 									</div>
 									{(post.data.category || post.data.tags?.length) && (
 										<div class="post-meta taxonomy-links">
@@ -113,3 +99,4 @@ const filteredPosts = posts.filter((post) => (post.data.tags ?? []).includes(tag
 		</main>
 	</body>
 </html>
+

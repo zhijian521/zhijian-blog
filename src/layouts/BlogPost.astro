@@ -27,15 +27,15 @@ const {
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<main class="page page-grid">
+		<main class="page page-grid page-grid--post page-grid--sticky-side">
 			<aside class="side-stack">
-				<section class="terminal">
+				<section class="terminal post-meta-panel post-meta-panel--compact post-toc-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">目录</div>
 					</div>
-					<div class="terminal-body">
+					<div class="terminal-body post-toc-body">
 						{headings.length ? (
-							<ol class="toc-list">
+							<ol class="toc-list toc-list--cyber">
 								{headings.map((heading) => (
 									<li class="toc-item" style={`--depth:${heading.depth}`}>
 										<a href={`#${heading.slug}`}>{heading.text}</a>
@@ -47,24 +47,24 @@ const {
 						)}
 					</div>
 				</section>
-				<section class="terminal">
+				<section class="terminal post-meta-info-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">元信息</div>
 					</div>
-					<div class="terminal-body">
-						<div class="meta-list">
-							<div>
+					<div class="terminal-body post-meta-body">
+						<div class="meta-list post-meta-list">
+							<div class="post-meta-item">
 								<span class="meta-label">发布日期</span>
-								<div><FormattedDate date={pubDate} /></div>
+								<span class="post-meta-value"><FormattedDate date={pubDate} /></span>
 							</div>
 							{updatedDate && (
-								<div>
+								<div class="post-meta-item">
 									<span class="meta-label">更新日期</span>
-									<div><FormattedDate date={updatedDate} /></div>
+									<span class="post-meta-value"><FormattedDate date={updatedDate} /></span>
 								</div>
 							)}
 						</div>
-						<div>
+						<div class="post-meta-block">
 							<p class="meta-label">标签</p>
 							{tags?.length ? (
 								<div class="tag-list">
@@ -78,14 +78,14 @@ const {
 								<p class="hero-sub">暂无标签</p>
 							)}
 						</div>
-						<div>
+						<div class="post-meta-block">
 							<p class="meta-label">分类</p>
 							{category ? (
-								<p>
-									<a href={`/blog/categories/${encodeCategoryPath(category)}/`}>
+								<div class="tag-list">
+									<a class="tag" href={`/blog/categories/${encodeCategoryPath(category)}/`}>
 										{category}
 									</a>
-								</p>
+								</div>
 							) : (
 								<p class="hero-sub">暂无分类</p>
 							)}
@@ -115,5 +115,84 @@ const {
 				</div>
 			</section>
 		</main>
+		<script is:inline>
+			(() => {
+				const tocBody = document.querySelector('.post-toc-body');
+				const tocLinks = Array.from(
+					document.querySelectorAll('.toc-list--cyber a[href^="#"]'),
+				) as HTMLAnchorElement[];
+
+				if (!tocBody || !tocLinks.length) {
+					return;
+				}
+
+				const headingMap = new Map<string, HTMLHeadingElement>();
+
+				tocLinks.forEach((link) => {
+					const targetId = decodeURIComponent(link.getAttribute('href')?.slice(1) ?? '');
+					if (!targetId) return;
+					const target = document.getElementById(targetId);
+					if (target && /^H[1-6]$/.test(target.tagName)) {
+						headingMap.set(targetId, target as HTMLHeadingElement);
+					}
+				});
+
+				if (!headingMap.size) {
+					return;
+				}
+
+				let activeId = '';
+
+				const setActive = (id: string) => {
+					if (!id || activeId === id) return;
+					activeId = id;
+					tocLinks.forEach((link) => {
+						const linkId = decodeURIComponent(link.getAttribute('href')?.slice(1) ?? '');
+						const isActive = linkId === id;
+						link.classList.toggle('is-active', isActive);
+						if (isActive) {
+							link.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+						}
+					});
+				};
+
+				const getCurrentHeadingId = () => {
+					const threshold = window.scrollY + window.innerHeight * 0.28;
+					let current = '';
+					headingMap.forEach((heading, id) => {
+						if (heading.offsetTop <= threshold) {
+							current = id;
+						}
+					});
+					return current || Array.from(headingMap.keys())[0];
+				};
+
+				let ticking = false;
+				const onScroll = () => {
+					if (ticking) return;
+					ticking = true;
+					requestAnimationFrame(() => {
+						setActive(getCurrentHeadingId());
+						ticking = false;
+					});
+				};
+
+				tocLinks.forEach((link) => {
+					link.addEventListener('click', (event) => {
+						event.preventDefault();
+						const targetId = decodeURIComponent(link.getAttribute('href')?.slice(1) ?? '');
+						const target = headingMap.get(targetId);
+						if (!target) return;
+						setActive(targetId);
+						target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+						history.replaceState(null, '', `#${encodeURIComponent(targetId)}`);
+					});
+				});
+
+				setActive(getCurrentHeadingId());
+				window.addEventListener('scroll', onScroll, { passive: true });
+				window.addEventListener('resize', onScroll, { passive: true });
+			})();
+		</script>
 	</body>
 </html>

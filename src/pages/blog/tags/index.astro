@@ -7,6 +7,11 @@ import { collectTags, encodeTag } from '../../../utils/blogTaxonomy';
 const posts = await getCollection('blog');
 const tags = collectTags(posts);
 const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
+const stats = {
+	tagCount: tags.length,
+	postCount: posts.length,
+	withTagCount: posts.filter((post) => (post.data.tags?.length ?? 0) > 0).length,
+};
 ---
 
 <!doctype html>
@@ -17,15 +22,25 @@ const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<main class="page page-grid">
+		<main class="page page-grid page-grid--sticky-side page-grid--sticky-side-auto">
 			<aside class="side-stack side-stack--blog-width">
-				<section class="terminal">
+				<section class="terminal sticky-side-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">NAV</div>
 					</div>
 					<div class="terminal-body nav-actions">
 						<a class="hero-action" href="/blog/">返回文章列表</a>
 						<a class="hero-action" href="/blog/categories/">查看分类索引</a>
+					</div>
+				</section>
+				<section class="terminal sticky-side-panel">
+					<div class="terminal-bar">
+						<div class="terminal-title">stats</div>
+					</div>
+					<div class="terminal-body meta-list">
+						<div>标签节点：{stats.tagCount}</div>
+						<div>文章总数：{stats.postCount}</div>
+						<div>带标签文章：{stats.withTagCount}</div>
 					</div>
 				</section>
 			</aside>
