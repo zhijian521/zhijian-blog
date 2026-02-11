@@ -15,8 +15,10 @@ import {
 
 const posts = sortPostsByPriority(await getCollection('blog'));
 
-const contributionWeeks = 10;
-const contributionWindowDays = contributionWeeks * 7;
+const contributionWindowDays = 30;
+const contributionRows = 3;
+const contributionColumns = Math.ceil(contributionWindowDays / contributionRows);
+
 const formatDateKey = (date: Date) => {
 	const year = date.getFullYear();
 	const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -62,7 +64,6 @@ const contributionDays = Array.from({ length: contributionWindowDays }, (_, inde
 	return {
 		key,
 		count,
-		label: `${key} · ${count} 次提交`,
 	};
 });
 
@@ -70,6 +71,7 @@ const maxContribution = contributionDays.reduce(
 	(max, day) => Math.max(max, day.count),
 	0
 );
+
 const getContributionLevel = (count: number) => {
 	if (count === 0) {
 		return 0;
@@ -84,6 +86,7 @@ const getContributionLevel = (count: number) => {
 
 const contributionCells = contributionDays.map((day) => ({
 	...day,
+	label: `${day.key}：${day.count} 次提交`,
 	level: getContributionLevel(day.count),
 }));
 
@@ -100,8 +103,8 @@ const allCategories = collectCategories(posts);
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
 		<main class="page page-grid">
-			<aside class="side-stack">
-				<section class="terminal profile-panel">
+			<aside class="side-stack side-stack--blog-width">
+				<section class="terminal profile-panel profile-panel--compact">
 					<div class="terminal-bar">
 						<div class="terminal-title">profile</div>
 					</div>
@@ -118,20 +121,13 @@ const allCategories = collectCategories(posts);
 						<p class="hero-sub profile-linkline">
 							<span class="prompt">$</span><a href="https://www.yuwb.dev">https://yuwb.dev</a>
 						</p>
-					</div>
-				</section>
-				<section class="terminal">
-					<div class="terminal-bar">
-						<div class="terminal-title">commits</div>
-					</div>
-					<div class="terminal-body">
-						<div>
-							<p class="meta-label">提交日历</p>
+						<div class="profile-commits">
+							<p class="meta-label">提交日志</p>
 							<div
-								class="contribution-grid"
-								style={`--weeks:${contributionWeeks}`}
+								class="contribution-grid contribution-grid--inline"
+								style={`--columns:${contributionColumns};--rows:${contributionRows}`}
 								role="img"
-								aria-label={`最近 ${contributionWeeks} 周提交日历`}
+								aria-label={`最近 ${contributionWindowDays} 天提交活跃度`}
 							>
 								{contributionCells.map((day) => (
 									<span
@@ -141,10 +137,17 @@ const allCategories = collectCategories(posts);
 								))}
 							</div>
 						</div>
+					</div>
+				</section>
+				<section class="terminal taxonomy-panel taxonomy-panel--compact">
+					<div class="terminal-bar">
+						<div class="terminal-title">NAV</div>
+					</div>
+					<div class="terminal-body">
 						<div>
 							<p class="meta-label">标签索引</p>
 							{allTags.length ? (
-								<div class="tag-list tag-list--preview">
+								<div class="tag-list tag-list--preview tag-list--preview-3">
 									{allTags.map((tag) => (
 										<a class="tag" href={`/blog/tags/${encodeTag(tag.name)}/`}>
 											#{tag.name}
@@ -154,12 +157,14 @@ const allCategories = collectCategories(posts);
 							) : (
 								<p class="hero-sub">暂无标签</p>
 							)}
-							<p class="hero-sub taxonomy-more"><a href="/blog/tags/">查看更多标签 →</a></p>
+							<div class="nav-actions taxonomy-more-actions">
+								<a class="hero-action" href="/blog/tags/">查看更多标签</a>
+							</div>
 						</div>
 						<div>
 							<p class="meta-label">分类索引</p>
 							{allCategories.length ? (
-								<div class="tag-list tag-list--preview">
+								<div class="tag-list tag-list--preview tag-list--preview-3">
 									{allCategories.map((category) => (
 										<a
 											class="tag"
@@ -172,12 +177,14 @@ const allCategories = collectCategories(posts);
 							) : (
 								<p class="hero-sub">暂无分类</p>
 							)}
-							<p class="hero-sub taxonomy-more"><a href="/blog/categories/">查看更多分类 →</a></p>
+							<div class="nav-actions taxonomy-more-actions">
+								<a class="hero-action" href="/blog/categories/">查看更多分类</a>
+							</div>
 						</div>
 					</div>
 				</section>
 			</aside>
-			<section class="terminal terminal-article">
+			<section class="terminal terminal-article blog-list-article">
 				<div class="terminal-bar">
 					<div class="terminal-title">posts</div>
 				</div>
@@ -219,6 +226,5 @@ const allCategories = collectCategories(posts);
 				</div>
 			</section>
 		</main>
-		
 	</body>
 </html>

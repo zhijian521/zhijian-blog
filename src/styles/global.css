@@ -374,6 +374,10 @@ main::after {
 	justify-self: end;
 }
 
+.side-stack--blog-width {
+	width: clamp(180px, 20vw, 240px);
+}
+
 .page-grid>.terminal-article {
 	grid-area: article;
 }
@@ -960,6 +964,28 @@ main::after {
 	mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
 }
 
+.tag-list--preview-3 {
+	max-height: calc(1.62rem * 3 + 0.56rem);
+	mask-image: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 1) 0%,
+		rgba(0, 0, 0, 1) 58%,
+		rgba(0, 0, 0, 0.95) 72%,
+		rgba(0, 0, 0, 0.8) 84%,
+		rgba(0, 0, 0, 0.48) 93%,
+		rgba(0, 0, 0, 0) 100%
+	);
+	-webkit-mask-image: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 1) 0%,
+		rgba(0, 0, 0, 1) 58%,
+		rgba(0, 0, 0, 0.95) 72%,
+		rgba(0, 0, 0, 0.8) 84%,
+		rgba(0, 0, 0, 0.48) 93%,
+		rgba(0, 0, 0, 0) 100%
+	);
+}
+
 .taxonomy-more {
 	margin: 0.38rem 0 0;
 	font-size: 0.8rem;
@@ -974,6 +1000,20 @@ main::after {
 .taxonomy-more a:hover {
 	color: #bffaff;
 	text-shadow: 0 0 10px rgba(99, 243, 255, 0.28);
+}
+
+.taxonomy-more-actions {
+	margin-top: 0.72rem;
+	margin-bottom: 0.1rem;
+}
+
+.taxonomy-more-actions .hero-action {
+	width: auto;
+	min-width: auto;
+	max-width: 100%;
+	padding: 0.48rem 0.72rem;
+	font-size: 0.68rem;
+	letter-spacing: 0.1em;
 }
 
 .tag {
@@ -1364,15 +1404,31 @@ body[data-tag-style="tactical"] .taxonomy-links a:focus-visible {
 }
 
 .tag-cloud--enhanced {
-	gap: 0.56rem;
+	gap: 0.86rem;
 }
 
 .tag-cloud-pill {
 	font-size: calc(var(--size, 1rem) * 0.84);
-	padding: 0.33rem 0.88rem;
+	padding: 0.48rem 1.08rem;
 	gap: 0.3rem;
 	font-weight: 400;
 	letter-spacing: 0.02em;
+}
+
+.taxonomy-title {
+	font-weight: 400;
+	font-size: 1.48rem;
+}
+
+.blog-list-article .terminal-body > div:first-child > h1 {
+	font-weight: 400;
+	font-size: 1.48rem;
+}
+
+.nav-actions {
+	display: grid;
+	gap: 0.44rem;
+	justify-items: center;
 }
 
 .tag-cloud-pill .tag-cloud-count {
@@ -1588,6 +1644,35 @@ body[data-tag-style="tactical"] .taxonomy-links a:focus-visible {
 		box-shadow 0.2s ease;
 }
 
+.profile-panel--compact .terminal-body {
+	padding: 0.68rem 0.9rem 0.74rem;
+}
+
+.profile-panel--compact .hero-sub {
+	margin-bottom: 0.36rem;
+	line-height: 1.24;
+}
+
+.profile-panel--compact .meta-list {
+	gap: 0.12rem;
+}
+
+.profile-panel--compact .meta-list > div {
+	padding: 0.04rem 0.08rem;
+}
+
+.profile-panel--compact .profile-linkline {
+	margin-bottom: 0.08rem;
+}
+
+.profile-panel--compact .profile-commits {
+	margin-top: 0.36rem;
+}
+
+.profile-panel--compact .profile-commits .meta-label {
+	margin-bottom: 0.42rem;
+}
+
 .profile-status {
 	display: flex;
 	align-items: center;
@@ -1631,13 +1716,42 @@ body[data-tag-style="tactical"] .taxonomy-links a:focus-visible {
 	overflow: hidden;
 }
 
+.contribution-grid--inline {
+	grid-template-rows: repeat(var(--rows, 3), auto);
+	grid-template-columns: repeat(var(--columns, 10), minmax(0, 1fr));
+	column-gap: 0.12rem;
+	row-gap: 0.28rem;
+	margin: 0;
+}
+
+.taxonomy-panel--compact .terminal-body {
+	padding: 0.9rem 1rem 1rem;
+}
+
+.taxonomy-panel--compact .terminal-body > div {
+	margin-bottom: 0.46rem;
+}
+
+.taxonomy-panel--compact .terminal-body > div:last-child {
+	margin-bottom: 0;
+}
+
+.taxonomy-panel--compact .meta-label {
+	margin-bottom: 0.26rem;
+}
+
 .contribution-cell {
 	width: 100%;
 	aspect-ratio: 1;
-	border-radius: 3px;
+	border-radius: 2px;
 	border: 1px solid rgba(99, 243, 255, 0.2);
 	background: rgba(99, 243, 255, 0.06);
 	display: inline-block;
+}
+
+.profile-panel--compact .contribution-cell {
+	max-width: 0.78rem;
+	justify-self: center;
 }
 
 .contribution-cell.level-0 {
@@ -1820,6 +1934,10 @@ mark {
 	.page-grid>.terminal-article {
 		grid-area: auto;
 		justify-self: stretch;
+	}
+
+	.side-stack--blog-width {
+		width: auto;
 	}
 
 	.terminal-hero .terminal-body {

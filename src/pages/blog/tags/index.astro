@@ -18,14 +18,14 @@ const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
 		<main class="page page-grid">
-			<aside class="side-stack">
+			<aside class="side-stack side-stack--blog-width">
 				<section class="terminal">
 					<div class="terminal-bar">
-						<div class="terminal-title">navigation</div>
+						<div class="terminal-title">NAV</div>
 					</div>
-					<div class="terminal-body">
-						<p class="hero-sub"><a href="/blog/">返回文章列表</a></p>
-						<p class="hero-sub"><a href="/blog/categories/">查看分类索引</a></p>
+					<div class="terminal-body nav-actions">
+						<a class="hero-action" href="/blog/">返回文章列表</a>
+						<a class="hero-action" href="/blog/categories/">查看分类索引</a>
 					</div>
 				</section>
 			</aside>
@@ -34,7 +34,7 @@ const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
 					<div class="terminal-title">tags</div>
 				</div>
 				<div class="terminal-body">
-					<h1>标签索引</h1>
+					<h1 class="taxonomy-title">标签索引</h1>
 					<p class="hero-sub">共 {tags.length} 个标签，点击查看对应文章集合。</p>
 					{tags.length ? (
 						<div class="tag-cloud tag-cloud--enhanced">
