@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseHead from '../../../components/BaseHead.astro';
+import SidebarNav from '../../../components/SidebarNav.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
 import { collectTags, encodeTag } from '../../../utils/blogTaxonomy';
 
@@ -24,16 +25,13 @@ const stats = {
 		<div class="data-stream" aria-hidden="true"></div>
 		<main class="page page-grid page-grid--sticky-side page-grid--sticky-side-auto">
 			<aside class="side-stack side-stack--blog-width">
-				<section class="terminal sticky-side-panel">
-					<div class="terminal-bar">
-						<div class="terminal-title">NAV</div>
-					</div>
-					<div class="terminal-body nav-actions">
-						<a class="hero-action" href="/">首页</a>
-						<a class="hero-action" href="/blog/">文章列表</a>
-						<a class="hero-action" href="/blog/categories/">分类索引</a>
-					</div>
-				</section>
+				<SidebarNav
+					actions={[
+						{ href: '/', label: '首页' },
+						{ href: '/blog/', label: '文章列表' },
+						{ href: '/blog/categories/', label: '分类索引' },
+					]}
+				/>
 				<section class="terminal sticky-side-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">stats</div>

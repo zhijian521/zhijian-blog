@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseHead from '../../../components/BaseHead.astro';
 import FormattedDate from '../../../components/FormattedDate.astro';
+import SidebarNav from '../../../components/SidebarNav.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
 import {
 	encodeCategoryPath,
@@ -39,22 +40,19 @@ const filteredPosts = posts.filter((post) => (post.data.tags ?? []).includes(tag
 		<div class="data-stream" aria-hidden="true"></div>
 		<main class="page page-grid page-grid--sticky-side page-grid--sticky-side-auto">
 			<aside class="side-stack side-stack--blog-width" style="--side-panels:1;">
-				<section class="terminal sticky-side-panel">
-					<div class="terminal-bar">
-						<div class="terminal-title">NAV</div>
+				<SidebarNav
+					cyber
+					actions={[
+						{ href: '/blog/', label: '查看文章列表' },
+						{ href: '/blog/tags/', label: '返回标签索引' },
+					]}
+				>
+					<div slot="context" class="nav-cyber-context">
+						<p class="nav-cyber-kicker">ACTIVE TAG</p>
+						<a class="nav-cyber-pill" href={`/blog/tags/${encodeTag(tag)}/`}>#{tag}</a>
+						<p class="nav-cyber-note">命中 {filteredPosts.length} 篇文章</p>
 					</div>
-					<div class="terminal-body nav-actions nav-actions--cyber">
-						<div class="nav-cyber-context">
-							<p class="nav-cyber-kicker">ACTIVE TAG</p>
-							<a class="nav-cyber-pill" href={`/blog/tags/${encodeTag(tag)}/`}>#{tag}</a>
-							<p class="nav-cyber-note">命中 {filteredPosts.length} 篇文章</p>
-						</div>
-						<div class="nav-cyber-buttons">
-							<a class="hero-action" href="/blog/">查看文章列表</a>
-							<a class="hero-action" href="/blog/tags/">返回标签索引</a>
-						</div>
-					</div>
-				</section>
+				</SidebarNav>
 			</aside>
 
 			<section class="terminal terminal-article">

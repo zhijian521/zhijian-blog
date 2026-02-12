@@ -1,0 +1,34 @@
+---
+type NavAction = {
+	href: string;
+	label: string;
+};
+
+type Props = {
+	title?: string;
+	actions: NavAction[];
+	cyber?: boolean;
+};
+
+const { title = 'NAV', actions, cyber = false } = Astro.props as Props;
+---
+
+<section class="terminal sticky-side-panel">
+	<div class="terminal-bar">
+		<div class="terminal-title">{title}</div>
+	</div>
+	<div class:list={["terminal-body", "nav-actions", cyber && "nav-actions--cyber"]}>
+		{cyber && Astro.slots.has('context') && <slot name="context" />}
+		{cyber ? (
+			<div class="nav-cyber-buttons">
+				{actions.map((action) => (
+					<a class="hero-action" href={action.href}>{action.label}</a>
+				))}
+			</div>
+		) : (
+			actions.map((action) => (
+				<a class="hero-action" href={action.href}>{action.label}</a>
+			))
+		)}
+	</div>
+</section>
