@@ -4,7 +4,21 @@ import BlogPost from '../layouts/BlogPost.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
-	return posts.map((post) => ({
+	const reservedIds = new Set(['blog', 'about', 'rss.xml']);
+	const seenIds = new Set<string>();
+
+	const validPosts = posts.filter((post) => {
+		const id = post.data.id.trim();
+
+		if (!id || reservedIds.has(id) || seenIds.has(id)) {
+			return false;
+		}
+
+		seenIds.add(id);
+		return true;
+	});
+
+	return validPosts.map((post) => ({
 		params: { id: post.data.id },
 		props: post,
 	}));

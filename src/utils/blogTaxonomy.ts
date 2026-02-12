@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import { encodeCategoryPath as encodeCategoryPathFromDirectory } from './categoryDirectory';
 
 type BlogPost = CollectionEntry<'blog'>;
 
@@ -16,18 +17,13 @@ export function getPostPath(postId: string): string {
 }
 
 export function encodeCategoryPath(category: string): string {
-	return category
-		.split('/')
-		.map((segment) => segment.trim())
-		.filter(Boolean)
-		.map((segment) => encodeURIComponent(segment))
-		.join('/');
+	return encodeCategoryPathFromDirectory(category);
 }
 
 export function sortPostsByPriority(posts: BlogPost[]): BlogPost[] {
 	return [...posts].sort((a, b) => {
 		if (a.data.sticky !== b.data.sticky) {
-			return a.data.sticky ? -1 : 1;
+			return b.data.sticky - a.data.sticky;
 		}
 
 		return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();

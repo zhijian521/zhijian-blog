@@ -32,8 +32,10 @@ const blog = defineCollection({
 			updatedDate: data.updatedDate ?? data.update,
 			sticky:
 				typeof data.sticky === 'number'
-					? data.sticky > 0
-					: Boolean(data.sticky ?? false),
+					? data.sticky
+					: data.sticky
+						? 1
+						: 0,
 			tags: data.tags ?? [],
 			category: data.category,
 			heroImage: data.heroImage,
