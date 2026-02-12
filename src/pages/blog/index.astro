@@ -2,14 +2,13 @@
 import { execSync } from 'node:child_process';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
+import PostCard from '../../components/PostCard.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 import {
 	collectCategories,
 	collectTags,
 	encodeCategoryPath,
 	encodeTag,
-	getPostPath,
 	sortPostsByPriority,
 } from '../../utils/blogTaxonomy';
 
@@ -191,36 +190,11 @@ const allCategories = collectCategories(posts);
 				<div class="terminal-body">
 					<div>
 						<h1 class="taxonomy-title">文章列表</h1>
-						<p class="hero-sub">执行 <code>open /&lt;id&gt;</code> 进入详情。</p>
+						<p class="hero-sub">执行 <code>open /article/&lt;id&gt;</code> 进入详情。</p>
 					</div>
 					<ul class="post-list post-list--cards">
 						{posts.map((post) => (
-							<li class="post-card">
-								<div class="post-card-head">
-									<span class="post-card-id">ID {post.data.id}</span>
-									<span class="post-card-date"><FormattedDate date={post.data.pubDate} /></span>
-								</div>
-								<a class="post-card-title" href={getPostPath(post.data.id)}>
-									{post.data.title}
-								</a>
-								<div class="post-meta post-card-desc">
-									<FormattedDate date={post.data.pubDate} /> · {post.data.description}
-								</div>
-								{(post.data.category || post.data.tags?.length) && (
-									<div class="post-meta taxonomy-links">
-										{post.data.category && (
-											<a
-												href={`/blog/categories/${encodeCategoryPath(post.data.category)}/`}
-											>
-												{post.data.category}
-											</a>
-										)}
-										{post.data.tags?.slice(0, 3).map((tag) => (
-											<a href={`/blog/tags/${encodeTag(tag)}/`}>#{tag}</a>
-										))}
-									</div>
-								)}
-							</li>
+							<PostCard post={post} descriptionSeparator="·" />
 						))}
 					</ul>
 				</div>

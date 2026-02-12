@@ -1,0 +1,27 @@
+---
+type StatItem = {
+	label: string;
+	value: number;
+};
+
+type Props = {
+	title?: string;
+	items: StatItem[];
+};
+
+const { title = 'stats', items } = Astro.props as Props;
+---
+
+<section class="terminal sticky-side-panel">
+	<div class="terminal-bar">
+		<div class="terminal-title">{title}</div>
+	</div>
+	<div class="terminal-body meta-list taxonomy-stats">
+		{items.map((item) => (
+			<div class="taxonomy-stat-item">
+				<span class="taxonomy-stat-label">{item.label}</span>
+				<span class="taxonomy-stat-value">{item.value}</span>
+			</div>
+		))}
+	</div>
+</section>

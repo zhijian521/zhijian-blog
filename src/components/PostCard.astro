@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import { encodeCategoryPath, encodeTag, getPostPath } from '../utils/blogTaxonomy';
+
+type Props = {
+	post: CollectionEntry<'blog'>;
+	descriptionSeparator?: string;
+};
+
+const { post, descriptionSeparator = '·' } = Astro.props as Props;
+---
+
+<li class="post-card">
+	<div class="post-card-head">
+		<span class="post-card-id">ID {post.data.id}</span>
+		<span class="post-card-date"><FormattedDate date={post.data.pubDate} /></span>
+	</div>
+	<a class="post-card-title" href={getPostPath(post.data.id)}>{post.data.title}</a>
+	<div class="post-meta post-card-desc">
+		<FormattedDate date={post.data.pubDate} /> {descriptionSeparator} {post.data.description}
+	</div>
+	{(post.data.category || post.data.tags?.length) && (
+		<div class="post-meta taxonomy-links">
+			{post.data.category && (
+				<a href={`/blog/categories/${encodeCategoryPath(post.data.category)}/`}>
+					{post.data.category}
+				</a>
+			)}
+			{post.data.tags?.slice(0, 3).map((tag) => (
+				<a href={`/blog/tags/${encodeTag(tag)}/`}>#{tag}</a>
+			))}
+		</div>
+	)}
+</li>

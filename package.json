@@ -8,14 +8,18 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "lint": "npm run check"
+    "lint": "npm run check",
+    "test": "tsx --test tests/taxonomy-utils.test.ts"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.3",
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.7.0",
-    "@astrojs/check": "^0.9.3",
     "astro": "^5.17.1",
     "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }

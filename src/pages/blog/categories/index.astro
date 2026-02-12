@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseHead from '../../../components/BaseHead.astro';
 import SidebarNav from '../../../components/SidebarNav.astro';
+import TaxonomyStats from '../../../components/TaxonomyStats.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
 import {
 	buildCategoryDirectory,
@@ -52,25 +53,13 @@ for (const items of childrenByParent.values()) {
 						{ href: '/blog/tags/', label: '标签索引' },
 					]}
 				/>
-				<section class="terminal sticky-side-panel">
-					<div class="terminal-bar">
-						<div class="terminal-title">stats</div>
-					</div>
-					<div class="terminal-body meta-list taxonomy-stats">
-						<div class="taxonomy-stat-item">
-							<span class="taxonomy-stat-label">分类节点</span>
-							<span class="taxonomy-stat-value">{stats.categoryCount}</span>
-						</div>
-						<div class="taxonomy-stat-item">
-							<span class="taxonomy-stat-label">文章总数</span>
-							<span class="taxonomy-stat-value">{stats.postCount}</span>
-						</div>
-						<div class="taxonomy-stat-item">
-							<span class="taxonomy-stat-label">带分类文章</span>
-							<span class="taxonomy-stat-value">{stats.withCategoryCount}</span>
-						</div>
-					</div>
-				</section>
+				<TaxonomyStats
+					items={[
+						{ label: '分类节点', value: stats.categoryCount },
+						{ label: '文章总数', value: stats.postCount },
+						{ label: '带分类文章', value: stats.withCategoryCount },
+					]}
+				/>
 			</aside>
 
 			<section class="terminal terminal-article">

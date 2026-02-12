@@ -13,7 +13,7 @@ export function encodeTag(tag: string): string {
 }
 
 export function getPostPath(postId: string): string {
-	return `/${encodeURIComponent(postId)}`;
+	return `/article/${encodeURIComponent(postId)}`;
 }
 
 export function encodeCategoryPath(category: string): string {

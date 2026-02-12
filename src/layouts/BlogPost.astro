@@ -41,6 +41,7 @@ const {
 										<a href={`#${heading.slug}`}>{heading.text}</a>
 									</li>
 								))}
+								<li class="toc-item toc-item--spacer" aria-hidden="true"></li>
 							</ol>
 						) : (
 							<p class="hero-sub">暂无目录</p>
@@ -98,6 +99,10 @@ const {
 					<div class="terminal-title">article</div>
 				</div>
 				<div class="terminal-body">
+					<div class="post-nav-actions" role="navigation" aria-label="文章快捷导航">
+						<a class="hero-action" href="/">首页</a>
+						<a class="hero-action" href="/blog/">文章列表</a>
+					</div>
 					<header class="post-header">
 						<h1>{title}</h1>
 						<p class="hero-sub">{description}</p>
@@ -119,6 +124,8 @@ const {
 			(() => {
 				const tocBody = document.querySelector('.post-toc-body');
 				const tocLinks = Array.from(document.querySelectorAll('.toc-list--cyber a[href^="#"]'));
+				const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+				const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
 
 				if (!tocBody || !tocLinks.length) {
 					return;
@@ -149,7 +156,12 @@ const {
 						const isActive = linkId === id;
 						link.classList.toggle('is-active', isActive);
 						if (isActive) {
-							link.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+							link.setAttribute('aria-current', 'true');
+						} else {
+							link.removeAttribute('aria-current');
+						}
+						if (isActive) {
+							link.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: scrollBehavior });
 						}
 					});
 				};
@@ -182,12 +194,17 @@ const {
 						const target = headingMap.get(targetId);
 						if (!target) return;
 						setActive(targetId);
-						target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+						target.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
 						history.replaceState(null, '', `#${encodeURIComponent(targetId)}`);
 					});
 				});
 
-				setActive(getCurrentHeadingId());
+				const hashTargetId = decodeURIComponent(window.location.hash.slice(1));
+				if (hashTargetId && headingMap.has(hashTargetId)) {
+					setActive(hashTargetId);
+				} else {
+					setActive(getCurrentHeadingId());
+				}
 				window.addEventListener('scroll', onScroll, { passive: true });
 				window.addEventListener('resize', onScroll, { passive: true });
 			})();
