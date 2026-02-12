@@ -10,16 +10,12 @@ tags:
 id: n53c0vm2
 ---
 
-
-# GitHub 中文汉化
-
 > 汉化 GitHub 网站，使中文用户能够更方便地使用 GitHub。
-
 
 ## 涉及工具
 
--   油猴插件：[Tampermonkey](https://www.tampermonkey.net/)
--   中文汉化脚本：[GitHub 中文汉化脚本](https://github.com/maboloshi/github-chinese)
+- 油猴插件：[Tampermonkey](https://www.tampermonkey.net/)
+- 中文汉化脚本：[GitHub 中文汉化脚本](https://github.com/maboloshi/github-chinese)
 
 ## 设置步骤
 
@@ -37,8 +33,4 @@ id: n53c0vm2
 
 ![脚本权限](/images/Imgae_1763364596486.png)
 
-
-
 ​
-
-

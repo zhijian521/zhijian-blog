@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseHead from '../../../components/BaseHead.astro';
+import MobileSideToggle from '../../../components/MobileSideToggle.astro';
 import SidebarNav from '../../../components/SidebarNav.astro';
 import TaxonomyStats from '../../../components/TaxonomyStats.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
@@ -24,7 +25,8 @@ const stats = {
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<main class="page page-grid page-grid--sticky-side page-grid--sticky-side-auto">
+		<main class="page page-grid page-grid--sticky-side page-grid--sticky-side-auto" data-mobile-side-toggle-root>
+			<MobileSideToggle label="侧栏" openLabel="关闭" />
 			<aside class="side-stack side-stack--blog-width">
 				<SidebarNav
 					actions={[

@@ -2,6 +2,7 @@
 import { execSync } from 'node:child_process';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
+import MobileSideToggle from '../../components/MobileSideToggle.astro';
 import PostCard from '../../components/PostCard.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 import {
@@ -101,7 +102,8 @@ const allCategories = collectCategories(posts);
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<main class="page page-grid page-grid--sticky-side">
+		<main class="page page-grid page-grid--sticky-side" data-mobile-side-toggle-root>
+			<MobileSideToggle label="侧栏" openLabel="关闭" />
 			<aside class="side-stack side-stack--blog-width" style="--side-rows:minmax(0,0.9fr) minmax(0,1.1fr);">
 				<section class="terminal profile-panel profile-panel--compact profile-panel--home sticky-side-panel">
 					<div class="terminal-bar">

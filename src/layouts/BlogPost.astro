@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseHead from '../components/BaseHead.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import MobileSideToggle from '../components/MobileSideToggle.astro';
 import { encodeCategoryPath, encodeTag } from '../utils/blogTaxonomy';
 
 type Props = CollectionEntry<'blog'>['data'] & {
@@ -27,7 +28,8 @@ const {
 	<body>
 		<div class="noise-layer" aria-hidden="true"></div>
 		<div class="data-stream" aria-hidden="true"></div>
-		<main class="page page-grid page-grid--post page-grid--sticky-side">
+		<main class="page page-grid page-grid--post page-grid--sticky-side" data-mobile-side-toggle-root>
+			<MobileSideToggle label="侧栏" openLabel="关闭" />
 			<aside class="side-stack">
 				<section class="terminal post-meta-panel post-meta-panel--compact post-toc-panel">
 					<div class="terminal-bar">

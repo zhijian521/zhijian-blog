@@ -1,0 +1,128 @@
+---
+const {
+	label = 'NAV',
+	openLabel = 'CLOSE',
+} = Astro.props;
+---
+
+<div class="mobile-side-backdrop" data-mobile-side-backdrop hidden></div>
+<button
+	type="button"
+	class="mobile-side-toggle"
+	data-mobile-side-toggle
+	data-closed-label={label}
+	data-open-label={openLabel}
+	aria-expanded="false"
+	aria-label={label}
+>
+	<span class="mobile-side-toggle-icon-wrap" aria-hidden="true">
+		<svg class="mobile-side-toggle-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="none">
+			<path
+				class="mobile-side-toggle-icon-base"
+				d="M401.066667 465.066667H162.133333c-36.266667 0-64-27.733333-64-64V162.133333c0-36.266667 27.733333-64 64-64h241.066667c36.266667 0 64 27.733333 64 64v241.066667c-2.133333 34.133333-29.866667 61.866667-66.133333 61.866667z m0 460.8H162.133333c-36.266667 0-64-27.733333-64-64v-238.933334c0-36.266667 27.733333-64 64-64h241.066667c36.266667 0 64 27.733333 64 64v241.066667c-2.133333 34.133333-29.866667 61.866667-66.133333 61.866667z m221.866666 0h238.933334c36.266667 0 64-27.733333 66.133333-61.866667V622.933333c0-36.266667-27.733333-64-64-64H622.933333c-36.266667 0-64 27.733333-64 64v238.933334c0 36.266667 27.733333 64 64 64z"
+			/>
+			<path
+				class="mobile-side-toggle-icon-accent"
+				d="M697.472 495.061333l-168.96-168.96a62.848 62.848 0 0 1 0-90.496l168.96-168.96a62.848 62.848 0 0 1 90.453333 0l170.496 170.453334c25.642667 25.642667 25.642667 64.853333 0 90.496l-167.424 167.466666c-27.178667 24.149333-67.882667 25.6-93.525333 0z"
+			/>
+		</svg>
+	</span>
+</button>
+
+<script is:inline>
+	(() => {
+		const init = () => {
+			const button = document.querySelector('[data-mobile-side-toggle]');
+			const backdrop = document.querySelector('[data-mobile-side-backdrop]');
+			const grid = document.querySelector('main.page-grid[data-mobile-side-toggle-root]');
+			const sideStack = grid?.querySelector(':scope > .side-stack');
+
+			if (!button || !backdrop || !grid || !sideStack) {
+				button?.remove();
+				backdrop?.remove();
+				return;
+			}
+
+			const mq = window.matchMedia('(max-width: 900px)');
+			const closedLabel = button.dataset.closedLabel || 'NAV';
+			const openLabel = button.dataset.openLabel || 'CLOSE';
+
+			const setButtonState = (expanded) => {
+				button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+				button.setAttribute('aria-label', expanded ? openLabel : closedLabel);
+				button.title = expanded ? openLabel : closedLabel;
+			};
+
+			const closeSidebar = () => {
+				grid.classList.remove('is-mobile-side-open');
+				document.body.classList.remove('mobile-side-open');
+				backdrop.classList.remove('is-active');
+				backdrop.hidden = true;
+				button.classList.remove('is-active');
+				setButtonState(false);
+			};
+
+			const openSidebar = () => {
+				grid.classList.add('is-mobile-side-open');
+				document.body.classList.add('mobile-side-open');
+				backdrop.hidden = false;
+				backdrop.classList.add('is-active');
+				button.classList.add('is-active');
+				setButtonState(true);
+			};
+
+			const toggleSidebar = () => {
+				if (!mq.matches) {
+					return;
+				}
+
+				if (grid.classList.contains('is-mobile-side-open')) {
+					closeSidebar();
+					return;
+				}
+
+				openSidebar();
+			};
+
+			const handleViewportChange = () => {
+				if (!mq.matches) {
+					closeSidebar();
+				}
+			};
+
+			button.addEventListener('click', toggleSidebar);
+			backdrop.addEventListener('click', closeSidebar);
+
+			sideStack.addEventListener('click', (event) => {
+				const target = event.target;
+				if (!(target instanceof Element)) {
+					return;
+				}
+
+				if (target.closest('a[href]')) {
+					closeSidebar();
+				}
+			});
+
+			window.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape') {
+					closeSidebar();
+				}
+			});
+
+			if (typeof mq.addEventListener === 'function') {
+				mq.addEventListener('change', handleViewportChange);
+			} else {
+				mq.onchange = handleViewportChange;
+			}
+
+			closeSidebar();
+		};
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', init, { once: true });
+		} else {
+			init();
+		}
+	})();
+</script>

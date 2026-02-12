@@ -557,6 +557,36 @@ body[data-tag-style="tactical"] .taxonomy-links a:focus-visible {
 }
 
 @media (max-width: 900px) {
+	.taxonomy-title {
+		font-size: 1.08rem;
+	}
+
+	.tag-list {
+		gap: 0.34rem;
+	}
+
+	.tag {
+		padding: 0.24rem 0.64rem;
+		font-size: 0.74rem;
+	}
+
+	.nav-cyber-context {
+		padding: 0.72rem 0.64rem 0.76rem;
+		gap: 0.62rem;
+	}
+
+	.nav-cyber-pill {
+		font-size: 0.92rem;
+		line-height: 1.5;
+		min-height: 2rem;
+		padding: 0.34rem 0.72rem;
+	}
+
+	.nav-cyber-note {
+		font-size: 0.8rem;
+		line-height: 1.54;
+	}
+
 	.tag-index-item {
 		padding: 0.24rem 0.44rem;
 		gap: 0.34rem;
