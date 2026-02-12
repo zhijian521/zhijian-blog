@@ -1,0 +1,263 @@
+.terminal-article .post-header,
+.terminal-article .post-content {
+	max-width: 100%;
+	width: 100%;
+}
+
+.terminal-article .post-content {
+	display: grid;
+	gap: 0.86rem;
+	font-size: 0.96rem;
+	line-height: 1.84;
+	color: rgba(216, 231, 245, 0.96);
+	letter-spacing: 0.01em;
+	word-break: break-word;
+}
+
+.terminal-article .post-content > * {
+	margin: 0;
+}
+
+.terminal-article .post-content p {
+	line-height: 1.9;
+	color: rgba(214, 228, 242, 0.95);
+}
+
+.terminal-article .post-content h1,
+.terminal-article .post-content h2,
+.terminal-article .post-content h3,
+.terminal-article .post-content h4,
+.terminal-article .post-content h5,
+.terminal-article .post-content h6 {
+	position: relative;
+	font-weight: 400;
+	line-height: 2;
+	color: #d9fcff;
+	letter-spacing: 0.02em;
+	margin-top: 0.46rem;
+	margin-bottom: 0.06rem;
+	text-shadow: 0 0 12px rgba(99, 243, 255, 0.12);
+}
+
+.terminal-article .post-content h2,
+.terminal-article .post-content h3 {
+	padding-left: 0.62rem;
+	border-left: 2px solid rgba(99, 243, 255, 0.45);
+	background: linear-gradient(
+		90deg,
+		rgba(99, 243, 255, 0.1),
+		rgba(99, 243, 255, 0.02) 56%,
+		transparent
+	);
+}
+
+.terminal-article .post-content h2 {
+	font-size: 1.22rem;
+	margin-top: 1.24rem;
+}
+
+.terminal-article .post-content h3 {
+	font-size: 1.07rem;
+	margin-top: 0.98rem;
+}
+
+.terminal-article .post-content h4,
+.terminal-article .post-content h5,
+.terminal-article .post-content h6 {
+	font-size: 1rem;
+	color: rgba(178, 240, 247, 0.94);
+}
+
+.terminal-article .post-content a {
+	color: #8ff7ff;
+	text-decoration: none;
+	border-bottom: 1px solid rgba(99, 243, 255, 0.35);
+	transition: color 0.18s ease, border-color 0.18s ease, text-shadow 0.18s ease;
+}
+
+.terminal-article .post-content a:hover {
+	color: #d8feff;
+	border-bottom-color: rgba(181, 255, 106, 0.68);
+	text-shadow:
+		0 0 10px rgba(99, 243, 255, 0.28),
+		0 0 18px rgba(181, 255, 106, 0.16);
+}
+
+.terminal-article .post-content ul,
+.terminal-article .post-content ol {
+	margin: 0;
+	padding-left: 1.2rem;
+	display: grid;
+	gap: 0.34rem;
+}
+
+.terminal-article .post-content ul {
+	list-style: square;
+}
+
+.terminal-article .post-content li {
+	margin: 0;
+	line-height: 1.76;
+	color: rgba(208, 224, 241, 0.95);
+}
+
+.terminal-article .post-content li::marker {
+	color: rgba(130, 246, 255, 0.85);
+}
+
+.terminal-article .post-content :not(pre) > code {
+	padding: 0.13rem 0.4rem;
+	border-radius: 0;
+	border: 1px solid rgba(99, 243, 255, 0.44);
+	background: linear-gradient(135deg, rgba(8, 20, 33, 0.92), rgba(9, 14, 24, 0.97));
+	color: #9fe6ff;
+	font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+	font-size: 0.88em;
+	line-height: 1.35;
+	box-shadow: inset 0 0 10px rgba(99, 243, 255, 0.08);
+}
+
+.terminal-article .post-content pre {
+	position: relative;
+	margin: 0.12rem 0;
+	padding: 0.92rem 0.96rem;
+	border-radius: 0;
+	border: 1px solid rgba(99, 243, 255, 0.34);
+	background: linear-gradient(150deg, rgba(6, 14, 23, 0.98), rgba(7, 12, 19, 0.98) 52%, rgba(6, 17, 25, 0.97));
+	box-shadow:
+		0 0 0 1px rgba(99, 243, 255, 0.1),
+		4px 4px 0 rgba(2, 8, 14, 0.68),
+		0 0 18px rgba(99, 243, 255, 0.08);
+	overflow: auto;
+	line-height: 1.6;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(99, 243, 255, 0.55) rgba(7, 14, 23, 0.85);
+}
+
+.terminal-article .post-content pre::-webkit-scrollbar {
+	height: 8px;
+	width: 8px;
+}
+
+.terminal-article .post-content pre::-webkit-scrollbar-track {
+	background: rgba(7, 14, 23, 0.88);
+}
+
+.terminal-article .post-content pre::-webkit-scrollbar-thumb {
+	background: linear-gradient(180deg, rgba(99, 243, 255, 0.68), rgba(181, 255, 106, 0.4));
+}
+
+.terminal-article .post-content pre > code {
+	border: 0;
+	padding: 0;
+	background: transparent;
+	box-shadow: none;
+	color: rgba(214, 241, 255, 0.95);
+	font-size: 0.88rem;
+	line-height: 1.64;
+}
+
+.terminal-article .post-content blockquote {
+	margin: 0;
+	padding: 0.62rem 0.84rem;
+	border-left: 2px solid rgba(99, 243, 255, 0.62);
+	border-radius: 0;
+	background: linear-gradient(90deg, rgba(99, 243, 255, 0.12), rgba(99, 243, 255, 0.03) 70%, transparent);
+	color: rgba(201, 223, 240, 0.95);
+	box-shadow: inset 0 0 0 1px rgba(99, 243, 255, 0.12);
+}
+
+.terminal-article .post-content blockquote p {
+	color: inherit;
+}
+
+.terminal-article .post-content hr {
+	margin: 0.58rem 0;
+	border: 0;
+	height: 1px;
+	background: linear-gradient(90deg, rgba(99, 243, 255, 0), rgba(99, 243, 255, 0.62), rgba(181, 255, 106, 0.38), rgba(99, 243, 255, 0));
+}
+
+.terminal-article .post-content table {
+	display: block;
+	width: 100%;
+	overflow-x: auto;
+	border-collapse: collapse;
+	margin: 0.12rem 0;
+	font-size: 0.9rem;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(99, 243, 255, 0.5) rgba(7, 14, 23, 0.86);
+}
+
+.terminal-article .post-content table th,
+.terminal-article .post-content table td {
+	border: 1px solid rgba(99, 243, 255, 0.26);
+	padding: 0.46rem 0.62rem;
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+.terminal-article .post-content table th {
+	background: rgba(99, 243, 255, 0.1);
+	color: #d9fbff;
+	font-weight: 400;
+	letter-spacing: 0.03em;
+}
+
+.terminal-article .post-content table td {
+	color: rgba(208, 226, 240, 0.94);
+	background: rgba(7, 16, 26, 0.55);
+}
+
+.terminal-article .post-content img {
+	display: block;
+	max-width: min(100%, 100%);
+	height: auto;
+	margin: 0.12rem auto;
+	border-radius: 0;
+	border: 1px solid rgba(99, 243, 255, 0.34);
+	box-shadow:
+		0 0 0 1px rgba(99, 243, 255, 0.12),
+		4px 4px 0 rgba(2, 8, 14, 0.62);
+}
+
+.terminal-article .post-content mark {
+	padding: 0 0.22em;
+	background: rgba(181, 255, 106, 0.24);
+	color: #f3ffe6;
+}
+
+.terminal-article .post-content strong,
+.terminal-article .post-content b {
+	font-weight: 500;
+	color: #f0fbff;
+}
+
+.terminal-article .post-content em {
+	color: rgba(194, 223, 241, 0.95);
+}
+
+@media (max-width: 900px) {
+	.terminal-article .post-content {
+		font-size: 0.93rem;
+		line-height: 1.82;
+		gap: 0.8rem;
+	}
+
+	.terminal-article .post-content h2 {
+		font-size: 1.16rem;
+	}
+
+	.terminal-article .post-content h3 {
+		font-size: 1.03rem;
+	}
+
+	.terminal-article .post-content pre {
+		padding: 0.84rem 0.86rem;
+	}
+
+	.terminal-article .post-content table th,
+	.terminal-article .post-content table td {
+		padding: 0.4rem 0.56rem;
+	}
+}

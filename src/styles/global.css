@@ -318,7 +318,7 @@ main {
 	position: relative;
 	z-index: 1;
 	min-height: 100vh;
-	width: min(1200px, 100%);
+	width: min(1260px, 100%);
 	margin: 0 auto;
 	padding: 48px 40px;
 	display: grid;
@@ -362,24 +362,45 @@ main::after {
 }
 
 .page-grid {
-	grid-template-columns: minmax(0, 1fr) clamp(180px, 20vw, 240px);
+	grid-template-columns: minmax(0, 720px) 240px;
 	grid-template-areas: "article side";
 	align-items: start;
+	justify-content: center;
+	column-gap: 20px;
 }
 
 .side-stack {
 	display: grid;
 	gap: 20px;
 	grid-area: side;
-	justify-self: end;
+	justify-self: stretch;
 }
 
 .side-stack--blog-width {
-	width: clamp(180px, 20vw, 240px);
+	width: 240px;
 }
 
 .page-grid>.terminal-article {
 	grid-area: article;
+}
+
+.page-grid>.terminal-article>.terminal-body {
+	padding-left: 2.2rem;
+	padding-right: 2.2rem;
+}
+
+.page-grid--post {
+	grid-template-columns: minmax(0, 720px) 240px;
+}
+
+.page-grid--post>.terminal-article {
+	width: 100%;
+	justify-self: stretch;
+}
+
+.page-grid--post>.side-stack {
+	width: 240px;
+	justify-self: stretch;
 }
 
 .terminal {
