@@ -118,22 +118,20 @@ const {
 		<script is:inline>
 			(() => {
 				const tocBody = document.querySelector('.post-toc-body');
-				const tocLinks = Array.from(
-					document.querySelectorAll('.toc-list--cyber a[href^="#"]'),
-				) as HTMLAnchorElement[];
+				const tocLinks = Array.from(document.querySelectorAll('.toc-list--cyber a[href^="#"]'));
 
 				if (!tocBody || !tocLinks.length) {
 					return;
 				}
 
-				const headingMap = new Map<string, HTMLHeadingElement>();
+				const headingMap = new Map();
 
 				tocLinks.forEach((link) => {
 					const targetId = decodeURIComponent(link.getAttribute('href')?.slice(1) ?? '');
 					if (!targetId) return;
 					const target = document.getElementById(targetId);
 					if (target && /^H[1-6]$/.test(target.tagName)) {
-						headingMap.set(targetId, target as HTMLHeadingElement);
+						headingMap.set(targetId, target);
 					}
 				});
 
@@ -143,7 +141,7 @@ const {
 
 				let activeId = '';
 
-				const setActive = (id: string) => {
+				const setActive = (id) => {
 					if (!id || activeId === id) return;
 					activeId = id;
 					tocLinks.forEach((link) => {
