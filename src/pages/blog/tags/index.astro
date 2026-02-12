@@ -29,18 +29,28 @@ const stats = {
 						<div class="terminal-title">NAV</div>
 					</div>
 					<div class="terminal-body nav-actions">
-						<a class="hero-action" href="/blog/">返回文章列表</a>
-						<a class="hero-action" href="/blog/categories/">查看分类索引</a>
+						<a class="hero-action" href="/">首页</a>
+						<a class="hero-action" href="/blog/">文章列表</a>
+						<a class="hero-action" href="/blog/categories/">分类索引</a>
 					</div>
 				</section>
 				<section class="terminal sticky-side-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">stats</div>
 					</div>
-					<div class="terminal-body meta-list">
-						<div>标签节点：{stats.tagCount}</div>
-						<div>文章总数：{stats.postCount}</div>
-						<div>带标签文章：{stats.withTagCount}</div>
+					<div class="terminal-body meta-list taxonomy-stats">
+						<div class="taxonomy-stat-item">
+							<span class="taxonomy-stat-label">标签节点</span>
+							<span class="taxonomy-stat-value">{stats.tagCount}</span>
+						</div>
+						<div class="taxonomy-stat-item">
+							<span class="taxonomy-stat-label">文章总数</span>
+							<span class="taxonomy-stat-value">{stats.postCount}</span>
+						</div>
+						<div class="taxonomy-stat-item">
+							<span class="taxonomy-stat-label">带标签文章</span>
+							<span class="taxonomy-stat-value">{stats.withTagCount}</span>
+						</div>
 					</div>
 				</section>
 			</aside>

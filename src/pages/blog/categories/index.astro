@@ -49,18 +49,28 @@ for (const items of childrenByParent.values()) {
 						<div class="terminal-title">NAV</div>
 					</div>
 					<div class="terminal-body nav-actions">
-						<a class="hero-action" href="/blog/">查看文章列表</a>
-						<a class="hero-action" href="/blog/tags/">查看标签索引</a>
+						<a class="hero-action" href="/">首页</a>
+						<a class="hero-action" href="/blog/">文章列表</a>
+						<a class="hero-action" href="/blog/tags/">标签索引</a>
 					</div>
 				</section>
 				<section class="terminal sticky-side-panel">
 					<div class="terminal-bar">
 						<div class="terminal-title">stats</div>
 					</div>
-					<div class="terminal-body meta-list">
-						<div>分类节点：{stats.categoryCount}</div>
-						<div>文章总数：{stats.postCount}</div>
-						<div>带分类文章：{stats.withCategoryCount}</div>
+					<div class="terminal-body meta-list taxonomy-stats">
+						<div class="taxonomy-stat-item">
+							<span class="taxonomy-stat-label">分类节点</span>
+							<span class="taxonomy-stat-value">{stats.categoryCount}</span>
+						</div>
+						<div class="taxonomy-stat-item">
+							<span class="taxonomy-stat-label">文章总数</span>
+							<span class="taxonomy-stat-value">{stats.postCount}</span>
+						</div>
+						<div class="taxonomy-stat-item">
+							<span class="taxonomy-stat-label">带分类文章</span>
+							<span class="taxonomy-stat-value">{stats.withCategoryCount}</span>
+						</div>
 					</div>
 				</section>
 			</aside>
