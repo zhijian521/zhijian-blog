@@ -68,6 +68,10 @@ const imageUrl = typeof image === 'string' ? image : image.src;
 <script is:inline>
 	(() => {
 		const root = document.documentElement;
+		if (root.dataset.pageLoadingBound === 'true') {
+			return;
+		}
+		root.dataset.pageLoadingBound = 'true';
 
 		const setLoading = () => {
 			root.classList.add('is-page-loading');
@@ -104,7 +108,8 @@ const imageUrl = typeof image === 'string' ? image : image.src;
 				return target.closest('a[href]');
 			}
 
-			for (const node of event.composedPath()) {
+			const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+			for (const node of path) {
 				if (node instanceof HTMLAnchorElement && node.hasAttribute('href')) {
 					return node;
 				}

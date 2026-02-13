@@ -183,6 +183,7 @@
 	}
 
 	.post-toc-panel .post-toc-body {
+		max-height: 44vh;
 		margin: 0.44rem 0 0.64rem 0.56rem;
 	}
 
@@ -202,7 +203,7 @@
 	}
 
 	.post-nav-actions .hero-action {
-		min-height: 44px;
-		padding: 0.56rem 0.82rem;
+		min-height: 40px;
+		padding: 0.46rem 0.78rem;
 	}
 }

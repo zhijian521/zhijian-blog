@@ -33,6 +33,7 @@ export function encodeCategoryPath(category: string): string {
 
 export function buildCategoryDirectory(posts: BlogPost[]): CategoryDirectoryItem[] {
 	const nodeMap = new Map<string, MutableCategoryNode>();
+	const childrenMap = new Map<string | null, MutableCategoryNode[]>();
 
 	const ensureNode = (path: string): MutableCategoryNode => {
 		const existingNode = nodeMap.get(path);
@@ -80,12 +81,24 @@ export function buildCategoryDirectory(posts: BlogPost[]): CategoryDirectoryItem
 		}
 	}
 
+	for (const node of nodeMap.values()) {
+		const siblings = childrenMap.get(node.parentPath);
+		if (siblings) {
+			siblings.push(node);
+			continue;
+		}
+
+		childrenMap.set(node.parentPath, [node]);
+	}
+
+	for (const children of childrenMap.values()) {
+		children.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+	}
+
 	const rows: CategoryDirectoryItem[] = [];
 
 	const walk = (parentPath: string | null) => {
-		const children = [...nodeMap.values()]
-			.filter((node) => node.parentPath === parentPath)
-			.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+		const children = childrenMap.get(parentPath) ?? [];
 
 		for (const child of children) {
 			rows.push({
@@ -141,4 +154,3 @@ export function filterPostsByCategory(
 		return postCategory === normalizedPath || postCategory.startsWith(prefix);
 	});
 }
-
