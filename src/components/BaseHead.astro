@@ -64,3 +64,84 @@ const imageUrl = typeof image === 'string' ? image : image.src;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(imageUrl, Astro.url)} />
+
+<script is:inline>
+	(() => {
+		const root = document.documentElement;
+
+		const setLoading = () => {
+			root.classList.add('is-page-loading');
+			document.body?.setAttribute('aria-busy', 'true');
+		};
+
+		const clearLoading = () => {
+			root.classList.remove('is-page-loading');
+			document.body?.removeAttribute('aria-busy');
+		};
+
+		const isPageNavigation = (anchor) => {
+			if (!anchor || anchor.hasAttribute('download')) return false;
+
+			const target = anchor.getAttribute('target');
+			if (target && target !== '_self') return false;
+
+			const href = anchor.getAttribute('href');
+			if (!href || href.startsWith('#')) return false;
+			if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
+				return false;
+			}
+
+			const nextUrl = new URL(anchor.href, location.href);
+			const isSamePath = nextUrl.pathname === location.pathname && nextUrl.search === location.search;
+			if (isSamePath && nextUrl.hash) return false;
+
+			return nextUrl.href !== location.href;
+		};
+
+		const getAnchorFromEvent = (event) => {
+			const target = event.target;
+			if (target instanceof Element) {
+				return target.closest('a[href]');
+			}
+
+			for (const node of event.composedPath()) {
+				if (node instanceof HTMLAnchorElement && node.hasAttribute('href')) {
+					return node;
+				}
+			}
+
+			return null;
+		};
+
+		const handleNavigationStart = (event) => {
+			if (event.defaultPrevented) return;
+			if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+			if ('button' in event && event.button !== 0) return;
+
+			const anchor = getAnchorFromEvent(event);
+			if (!isPageNavigation(anchor)) return;
+
+			setLoading();
+		};
+
+		document.addEventListener(
+			'pointerdown',
+			handleNavigationStart,
+			{ capture: true, passive: true }
+		);
+
+		document.addEventListener(
+			'click',
+			handleNavigationStart,
+			{ capture: true }
+		);
+
+		window.addEventListener('beforeunload', setLoading);
+		window.addEventListener('pageshow', clearLoading);
+
+		document.addEventListener('astro:before-preparation', setLoading);
+		document.addEventListener('astro:after-swap', clearLoading);
+
+		clearLoading();
+	})();
+</script>

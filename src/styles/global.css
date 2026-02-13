@@ -49,6 +49,58 @@ body {
 	text-rendering: optimizeLegibility;
 }
 
+html.is-page-loading {
+	cursor: progress;
+}
+
+html::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 3px;
+	width: 100%;
+	opacity: 0;
+	pointer-events: none;
+	z-index: 1200;
+	background: linear-gradient(90deg, rgba(99, 243, 255, 0.95), rgba(181, 255, 106, 0.95));
+	box-shadow: 0 0 14px rgba(99, 243, 255, 0.7);
+	transform: scaleX(0);
+	transform-origin: left center;
+	transition: opacity 120ms ease;
+}
+
+html::after {
+	content: "加载中...";
+	position: fixed;
+	top: 14px;
+	right: 16px;
+	padding: 4px 10px;
+	border: 1px solid rgba(99, 243, 255, 0.4);
+	border-radius: 6px;
+	background: rgba(6, 10, 16, 0.8);
+	color: rgba(181, 255, 106, 0.95);
+	font-size: 12px;
+	letter-spacing: 0.12em;
+	opacity: 0;
+	transform: translateY(-6px);
+	pointer-events: none;
+	z-index: 1201;
+	transition:
+		opacity 120ms ease,
+		transform 120ms ease;
+}
+
+html.is-page-loading::before {
+	opacity: 1;
+	animation: pageLoadingBar 0.9s linear infinite;
+}
+
+html.is-page-loading::after {
+	opacity: 1;
+	transform: translateY(0);
+}
+
 body::before {
 	content: "";
 	position: fixed;
@@ -2048,6 +2100,16 @@ mark {
 
 	100% {
 		background-position: 0 520px;
+	}
+}
+
+@keyframes pageLoadingBar {
+	0% {
+		transform: scaleX(0);
+	}
+
+	100% {
+		transform: scaleX(1);
 	}
 }
 
