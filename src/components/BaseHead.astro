@@ -131,7 +131,13 @@ const imageUrl = typeof image === 'string' ? image : image.src;
 
 		document.addEventListener(
 			'pointerdown',
-			handleNavigationStart,
+			(event) => {
+				if (event.pointerType && event.pointerType !== 'mouse') {
+					return;
+				}
+
+				handleNavigationStart(event);
+			},
 			{ capture: true, passive: true }
 		);
 
